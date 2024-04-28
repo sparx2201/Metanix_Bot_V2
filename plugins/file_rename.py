@@ -81,18 +81,17 @@ async def refunc(client, message):
 # Define the callback for the 'upload' buttons
 @Client.on_callback_query(filters.regex("upload"))
 async def doc(bot, update):
+
     # Creating Directory for Metadata
     if not os.path.isdir("Metadata"):
         os.mkdir("Metadata")
-        
+
+    # Extracting necessary information
     prefix = await db.get_prefix(update.message.chat.id)
     suffix = await db.get_suffix(update.message.chat.id)
     new_name = update.message.text
     new_filename_ = new_name.split(":-")[1]
-    remname_text = await db.get_remname(update.message.chat.id)  # Get the remname text from the user's database entry
-    if remname_text and remname_text in new_filename_:
-        new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
-        
+
     try:
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
