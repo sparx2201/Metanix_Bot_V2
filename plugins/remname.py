@@ -2,10 +2,10 @@ from pyrogram import Client, filters
 from helper.database import db
 
 # Create a Pyrogram Client
-app = Client("my_session")
+
 
 # REMNAME
-@app.on_message(filters.private & filters.command('set_remname'))
+@Client.on_message(filters.private & filters.command('set_remname'))
 async def add_remname(client, message):
     if len(message.command) == 1:
         return await message.reply_text("**__Give The Remname Text__\n\nExample:- `/set_remname text_pattern1, text_pattern2, ...`**")
@@ -20,13 +20,13 @@ async def add_remname(client, message):
     
     await SnowDev.edit("**Remname Text Saved Successfully ✅**")
 
-@app.on_message(filters.private & filters.command('del_remname'))
+@Client.on_message(filters.private & filters.command('del_remname'))
 async def delete_remname(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
     await db.delete_remname(message.from_user.id)
     await SnowDev.edit("**Remname Text Deleted Successfully 🗑️**")
 
-@app.on_message(filters.private & filters.command('see_remname'))
+@Client.on_message(filters.private & filters.command('see_remname'))
 async def see_remname(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
     remname_text = await db.get_remname(message.from_user.id)
@@ -36,4 +36,4 @@ async def see_remname(client, message):
         await SnowDev.edit("**You Don't Have Any Remname Texts ❌**")
 
 # Run the Pyrogram Client
-app.run()
+Client.run()
