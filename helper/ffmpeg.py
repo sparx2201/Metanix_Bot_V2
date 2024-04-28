@@ -50,7 +50,7 @@ async def take_screen_shot(video_file, output_directory, ttl, remname_text):
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
     if os.path.lexists(out_put_file_name):
-        # Remove specified text from the output file name using remname.py function
+        # Remove specified text from the output file name
         out_put_file_name = remove_text_from_filename(out_put_file_name, remname_text)
         return out_put_file_name
     return None
