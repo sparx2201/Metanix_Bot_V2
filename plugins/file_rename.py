@@ -96,26 +96,27 @@ async def doc(bot, update):
     try:
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+
     except Exception as e:
-        return await update.message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
+        return await update.message.edit(f"⚠️ Something went wrong can't able to set Prefix or Suffix \nError: {e}")
 
     file_path = f"downloads/{new_filename}"
     file = update.message.reply_to_message
 
-    ms = await update.message.edit("**Trying To Download....**")
+    ms = await update.message.edit("**Tʀyɪɴɢ Tᴏ Dᴏᴡɴʟᴏᴀᴅɪɴɢ....**")
     try:
-        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....**", ms, time.time()))
+        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Dᴏᴡɴʟᴏᴀᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
     except Exception as e:
         return await ms.edit(e)
 
     _bool_metadata = await db.get_metadata(update.message.chat.id)
 
-    if _bool_metadata:
+    if (_bool_metadata):
         metadata_path = f"Metadata/{new_filename}"
         metadata = await db.get_metadata_code(update.message.chat.id)
         if metadata:
 
-            await ms.edit("Adding Metadata To File....")
+            await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
             cmd = f"""ffmpeg -i "{path}" {metadata} "{metadata_path}" """
 
             process = await asyncio.create_subprocess_shell(
@@ -130,9 +131,9 @@ async def doc(bot, update):
                     return await ms.edit(str(er) + "\n\n**Error**")
             except BaseException:
                 pass
-        await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying to upload....**")
+        await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
     else:
-        await ms.edit("**Trying to upload....**")
+        await ms.edit("**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
 
     duration = 0
     try:
@@ -151,13 +152,14 @@ async def doc(bot, update):
 
     if c_caption:
         try:
-            caption = c_caption.format(filename=new_filename, filesize=humanbytes(media.file_size), duration=convert(duration))
+            caption = c_caption.format(filename=new_filename, filesize=humanbytes(
+                media.file_size), duration=convert(duration))
         except Exception as e:
-            return await ms.edit(text=f"Your Caption Error Exception ●> ({e})")
+            return await ms.edit(text=f"Yᴏᴜʀ Cᴀᴩᴛɪᴏɴ Eʀʀᴏʀ Exᴄᴇᴩᴛ Kᴇyᴡᴏʀᴅ Aʀɢᴜᴍᴇɴᴛ ●> ({e})")
     else:
         caption = f"**{new_filename}**"
 
-    if media.thumbs or c_thumb:
+    if (media.thumbs or c_thumb):
         if c_thumb:
             ph_path = await bot.download_media(c_thumb)
             width, height, ph_path = await fix_thumb(ph_path)
@@ -181,7 +183,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     caption=caption,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -200,7 +202,7 @@ async def doc(bot, update):
                     height=height,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -216,7 +218,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -233,7 +235,7 @@ async def doc(bot, update):
                 os.remove(metadata_path)
             if path:
                 os.remove(path)
-            return await ms.edit(f" Error {e}")
+            return await ms.edit(f" Eʀʀᴏʀ {e}")
 
     else:
 
@@ -245,7 +247,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     caption=caption,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
             elif type == "video":
                 await bot.send_video(
                     update.message.chat.id,
@@ -256,7 +258,7 @@ async def doc(bot, update):
                     height=height,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
             elif type == "audio":
                 await bot.send_audio(
                     update.message.chat.id,
@@ -265,7 +267,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
         except Exception as e:
             os.remove(file_path)
             if ph_path:
@@ -274,7 +276,7 @@ async def doc(bot, update):
                 os.remove(metadata_path)
             if path:
                 os.remove(path)
-            return await ms.edit(f" Error {e}")
+            return await ms.edit(f" Eʀʀᴏʀ {e}")
 
     await ms.delete()
 
