@@ -48,7 +48,7 @@ async def rename_start(client, message):
 
 # Define the main message handler for private messages with replies
 
-
+@Client.on_message(filters.private & filters.reply)
 async def refunc(client, message):
     reply_message = message.reply_to_message
     if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
@@ -88,7 +88,7 @@ async def refunc(client, message):
         )
 # Define the callback for the 'upload' buttons
 
-
+@Client.on_callback_query(filters.regex("upload"))
 async def doc(bot, update):
     prefix = await jishubotz.get_prefix(update.message.chat.id)
     suffix = await jishubotz.get_suffix(update.message.chat.id)
