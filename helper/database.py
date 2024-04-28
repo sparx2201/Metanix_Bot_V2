@@ -1,7 +1,6 @@
 import motor.motor_asyncio
 from config import Config
 from .utils import send_log
-import datetime
 
 class Database:
     def __init__(self, uri, database_name):
@@ -17,8 +16,10 @@ class Database:
             prefix=None,
             suffix=None,
             metadata=False,
-            metadata_code=""" -map 0 -c:s copy -c:a copy -c:v copy -metadata title="Created By:- 𝘈𝘑" -metadata author="𝘈𝘑" -metadata:s:s title="Subtitled By :- @MetaNiXbot" -metadata:s:a title="By :- @MetaNiXbot" -metadata:s:v title="By:- 𝘈𝘑" """
+            metadata_code=""" -map 0 -c:s copy -c:a copy -c:v copy -metadata title="Created By:- 𝘈𝘑" -metadata author="𝘈𝘑" -metadata:s:s title="Subtitled By :- @MetaNiXbot" -metadata:s:a title="By :- @MetaNiXbot" -metadata:s:v title="By:- 𝘈𝘑" """,
+            remname=None  # Add a new field for remname text
         )
+
 
     async def add_user(self, b, m):
         u = m.from_user
@@ -85,6 +86,16 @@ class Database:
         return user.get('metadata_code', None)
 
     async def set_remname(self, id, remname_text):
+        await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_text}})
+
+    async def get_remname(self, id):
+        user = await self.col.find_one({'_id': int(id)})
+        return user.get('remname', None)
+
+    async def delete_remname(self, id):
+        await self.col.update_one({'_id': int(id)}, {'$unset': {'remname': ""}})
+
+async def set_remname(self, id, remname_text):
         await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_text}})
 
     async def get_remname(self, id):
