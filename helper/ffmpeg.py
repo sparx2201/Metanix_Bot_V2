@@ -4,7 +4,7 @@ import asyncio
 from PIL import Image
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from remname import remove_text_from_filename  # Import the necessary function from remname.py
+from plugins.remname import remove_text_from_filename  # Import the necessary function from remname.py
 
 async def fix_thumb(thumb):
     width = 0
