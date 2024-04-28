@@ -33,5 +33,3 @@ async def see_remname(client, message):
     else:
         await SnowDev.edit("**You Don't Have Any Remname Texts ❌**")
 
-# Run the Pyrogram Client
-Client.run()
