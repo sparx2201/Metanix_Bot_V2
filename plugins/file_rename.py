@@ -90,6 +90,11 @@ async def refunc(client, message):
 
 @Client.on_callback_query(filters.regex("upload"))
 async def doc(bot, update):
+
+	   # Creating Directory for Metadata
+    if not os.path.isdir("Metadata"):
+        os.mkdir("Metadata")
+	    
     prefix = await jishubotz.get_prefix(update.message.chat.id)
     suffix = await jishubotz.get_suffix(update.message.chat.id)
     new_name = update.message.text
