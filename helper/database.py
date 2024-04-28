@@ -3,9 +3,7 @@ from config import Config
 from .utils import send_log
 import datetime
 
-
 class Database:
-
     def __init__(self, uri, database_name):
         self._client = motor.motor_asyncio.AsyncIOMotorClient(uri)
         self.db = self._client[database_name]
@@ -86,7 +84,7 @@ class Database:
         user = await self.col.find_one({'_id': int(id)})
         return user.get('metadata_code', None)
 
- async def set_remname(self, id, remname_text):
+    async def set_remname(self, id, remname_text):
         await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_text}})
 
     async def get_remname(self, id):
@@ -95,6 +93,5 @@ class Database:
 
     async def delete_remname(self, id):
         await self.col.update_one({'_id': int(id)}, {'$unset': {'remname': ""}})
-
 
 db = Database(Config.DB_URL, Config.DB_NAME)
