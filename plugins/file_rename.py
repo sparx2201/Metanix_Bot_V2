@@ -1,53 +1,47 @@
 import random
-from helper.ffmpeg import fix_thumb, take_screen_shot
+import asyncio
+import os
+import time
 from pyrogram import Client, filters
 from pyrogram.enums import MessageMediaType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from helper.utils import progress_for_pyrogram, convert, humanbytes
-from helper.database import db
 from PIL import Image
-import asyncio
-import os
-import time
-from helper.utils import add_prefix_suffix
+
+from helper.utils import progress_for_pyrogram, convert, humanbytes, add_prefix_suffix
+from helper.ffmpeg import fix_thumb, take_screen_shot
+from helper.database import db
 from config import Config
 
-
-
-app = Client("test", api_id=Config.STRING_API_ID,
-             api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
+app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
 
 # Define a function to handle the 'rename' callback
-
-
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename_start(client, message):
     file = getattr(message, message.media.value)
     filename = file.file_name  
     if file.file_size > 2000 * 1024 * 1024:
-         return await message.reply_text("Sorry Bro This Bot Doesn't Support Uploading Files Bigger Than 2GB")
+        return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
 
     try:
         await message.reply_text(
-            text=f"**𝘗𝘭𝘦𝘢𝘴𝘦 𝘌𝘯𝘵𝘦𝘳 𝘕𝘦𝘸 𝘍𝘪𝘭𝘦𝘯𝘢𝘮𝘦...**\n\n**Old File Name** :- `{filename}`",
-	    reply_to_message_id=message.id,  
-	    reply_markup=ForceReply(True)
+            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
+            reply_to_message_id=message.id,  
+            reply_markup=ForceReply(True)
         )       
-        await sleep(30)
+        await asyncio.sleep(30)
     except FloodWait as e:
-        await sleep(e.value)
+        await asyncio.sleep(e.value)
         await message.reply_text(
             text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
-	    reply_to_message_id=message.id,  
-	    reply_markup=ForceReply(True)
+            reply_to_message_id=message.id,  
+            reply_markup=ForceReply(True)
         )
     except:
         pass
 
 # Define the main message handler for private messages with replies
-
 @Client.on_message(filters.private & filters.reply)
 async def refunc(client, message):
     reply_message = message.reply_to_message
@@ -70,63 +64,58 @@ async def refunc(client, message):
 
         # Use a list to store the inline keyboard buttons
         button = [
-            [InlineKeyboardButton(
-                "📁 Dᴏᴄᴜᴍᴇɴᴛ", callback_data="upload_document")]
+            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
         ]
         if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
-            button.append([InlineKeyboardButton(
-                "🎥 Vɪᴅᴇᴏ", callback_data="upload_video")])
+            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
         elif file.media == MessageMediaType.AUDIO:
-            button.append([InlineKeyboardButton(
-                "🎵 Aᴜᴅɪᴏ", callback_data="upload_audio")])
+            button.append([InlineKeyboardButton("🎵 Audio", callback_data="upload_audio")])
 
         # Use a single call to reply with both text and inline keyboard
         await message.reply(
-            text=f"**Sᴇʟᴇᴄᴛ Tʜᴇ Oᴜᴛᴩᴜᴛ Fɪʟᴇ Tyᴩᴇ**\n**• Fɪʟᴇ Nᴀᴍᴇ :-**  `{new_name}`",
+            text=f"**Select The Output File Type**\n**• File Name :-**  `{new_name}`",
             reply_to_message_id=file.id,
             reply_markup=InlineKeyboardMarkup(button)
         )
-# Define the callback for the 'upload' buttons
 
+# Define the callback for the 'upload' buttons
 @Client.on_callback_query(filters.regex("upload"))
 async def doc(bot, update):
-
-	   # Creating Directory for Metadata
+    # Creating Directory for Metadata
     if not os.path.isdir("Metadata"):
         os.mkdir("Metadata")
-	    
-    prefix = await jishubotz.get_prefix(update.message.chat.id)
-    suffix = await jishubotz.get_suffix(update.message.chat.id)
+        
+    prefix = await db.get_prefix(update.message.chat.id)
+    suffix = await db.get_suffix(update.message.chat.id)
     new_name = update.message.text
     new_filename_ = new_name.split(":-")[1]
-    remname_text = await jishubotz.get_remname(update.message.chat.id)  # Get the remname text from the user's database entry
+    remname_text = await db.get_remname(update.message.chat.id)  # Get the remname text from the user's database entry
     if remname_text and remname_text in new_filename_:
         new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
-	    
+        
     try:
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
-
     except Exception as e:
-        return await update.message.edit(f"⚠️ Something went wrong can't able to set Prefix or Suffix \nError: {e}")
+        return await update.message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
 
     file_path = f"downloads/{new_filename}"
     file = update.message.reply_to_message
 
-    ms = await update.message.edit("**Tʀyɪɴɢ Tᴏ Dᴏᴡɴʟᴏᴀᴅɪɴɢ....**")
+    ms = await update.message.edit("**Trying To Download....**")
     try:
-        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Dᴏᴡɴʟᴏᴀᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....**", ms, time.time()))
     except Exception as e:
         return await ms.edit(e)
 
     _bool_metadata = await db.get_metadata(update.message.chat.id)
 
-    if (_bool_metadata):
+    if _bool_metadata:
         metadata_path = f"Metadata/{new_filename}"
         metadata = await db.get_metadata_code(update.message.chat.id)
         if metadata:
 
-            await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
+            await ms.edit("Adding Metadata To File....")
             cmd = f"""ffmpeg -i "{path}" {metadata} "{metadata_path}" """
 
             process = await asyncio.create_subprocess_shell(
@@ -141,9 +130,9 @@ async def doc(bot, update):
                     return await ms.edit(str(er) + "\n\n**Error**")
             except BaseException:
                 pass
-        await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+        await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying to upload....**")
     else:
-        await ms.edit("**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+        await ms.edit("**Trying to upload....**")
 
     duration = 0
     try:
@@ -162,14 +151,13 @@ async def doc(bot, update):
 
     if c_caption:
         try:
-            caption = c_caption.format(filename=new_filename, filesize=humanbytes(
-                media.file_size), duration=convert(duration))
+            caption = c_caption.format(filename=new_filename, filesize=humanbytes(media.file_size), duration=convert(duration))
         except Exception as e:
-            return await ms.edit(text=f"Yᴏᴜʀ Cᴀᴩᴛɪᴏɴ Eʀʀᴏʀ Exᴄᴇᴩᴛ Kᴇyᴡᴏʀᴅ Aʀɢᴜᴍᴇɴᴛ ●> ({e})")
+            return await ms.edit(text=f"Your Caption Error Exception ●> ({e})")
     else:
         caption = f"**{new_filename}**"
 
-    if (media.thumbs or c_thumb):
+    if media.thumbs or c_thumb:
         if c_thumb:
             ph_path = await bot.download_media(c_thumb)
             width, height, ph_path = await fix_thumb(ph_path)
@@ -193,7 +181,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     caption=caption,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -212,7 +200,7 @@ async def doc(bot, update):
                     height=height,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -228,7 +216,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
 
                 from_chat = filw.chat.id
                 mg_id = filw.id
@@ -245,7 +233,7 @@ async def doc(bot, update):
                 os.remove(metadata_path)
             if path:
                 os.remove(path)
-            return await ms.edit(f" Eʀʀᴏʀ {e}")
+            return await ms.edit(f" Error {e}")
 
     else:
 
@@ -257,7 +245,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     caption=caption,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
             elif type == "video":
                 await bot.send_video(
                     update.message.chat.id,
@@ -268,7 +256,7 @@ async def doc(bot, update):
                     height=height,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
             elif type == "audio":
                 await bot.send_audio(
                     update.message.chat.id,
@@ -277,7 +265,7 @@ async def doc(bot, update):
                     thumb=ph_path,
                     duration=duration,
                     progress=progress_for_pyrogram,
-                    progress_args=("**Uᴩʟᴏᴅ Sᴛᴀʀᴛᴇᴅ....**", ms, time.time()))
+                    progress_args=("**Upload Started....**", ms, time.time()))
         except Exception as e:
             os.remove(file_path)
             if ph_path:
@@ -286,7 +274,7 @@ async def doc(bot, update):
                 os.remove(metadata_path)
             if path:
                 os.remove(path)
-            return await ms.edit(f" Eʀʀᴏʀ {e}")
+            return await ms.edit(f" Error {e}")
 
     await ms.delete()
 
