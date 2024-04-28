@@ -86,5 +86,15 @@ class Database:
         user = await self.col.find_one({'_id': int(id)})
         return user.get('metadata_code', None)
 
+ async def set_remname(self, id, remname_text):
+        await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_text}})
+
+    async def get_remname(self, id):
+        user = await self.col.find_one({'_id': int(id)})
+        return user.get('remname', None)
+
+    async def delete_remname(self, id):
+        await self.col.update_one({'_id': int(id)}, {'$unset': {'remname': ""}})
+
 
 db = Database(Config.DB_URL, Config.DB_NAME)
