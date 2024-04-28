@@ -1,7 +1,5 @@
 from pyrogram import Client, filters
-from helper.database import db
-
-# Create a Pyrogram Client
+from helper.database import db  # Assuming db is your Database class instance
 
 
 # REMNAME
@@ -16,7 +14,7 @@ async def add_remname(client, message):
     
     SnowDev = await message.reply_text("Please Wait ...")
     for pattern in remname_patterns:
-        await db.add_remname(message.from_user.id, pattern)
+        await db.set_remname(message.from_user.id, pattern)
     
     await SnowDev.edit("**Remname Text Saved Successfully ✅**")
 
