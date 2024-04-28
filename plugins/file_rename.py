@@ -13,6 +13,7 @@ import os
 import time
 from helper.utils import add_prefix_suffix
 from config import Config
+from remname import jishubotz
 
 
 app = Client("test", api_id=Config.STRING_API_ID,
@@ -48,11 +49,13 @@ async def rename_start(client, message):
 # Define the main message handler for private messages with replies
 
 
-@Client.on_message(filters.private & filters.reply)
 async def refunc(client, message):
     reply_message = message.reply_to_message
-    if isinstance(reply_message.reply_markup, ForceReply):
+    if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
         new_name = message.text
+        remname_text = await jishubotz.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
+        if remname_text and remname_text in new_name:
+            new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
         await message.delete()
         msg = await client.get_messages(message.chat.id, reply_message.id)
         file = msg.reply_to_message
@@ -87,19 +90,15 @@ async def refunc(client, message):
 # Define the callback for the 'upload' buttons
 
 
-@Client.on_callback_query(filters.regex("upload"))
 async def doc(bot, update):
-
-    # Creating Directory for Metadata
-    if not os.path.isdir("Metadata"):
-        os.mkdir("Metadata")
-
-    # Extracting necessary information
-    prefix = await db.get_prefix(update.message.chat.id)
-    suffix = await db.get_suffix(update.message.chat.id)
+    prefix = await jishubotz.get_prefix(update.message.chat.id)
+    suffix = await jishubotz.get_suffix(update.message.chat.id)
     new_name = update.message.text
     new_filename_ = new_name.split(":-")[1]
-
+    remname_text = await jishubotz.get_remname(update.message.chat.id)  # Get the remname text from the user's database entry
+    if remname_text and remname_text in new_filename_:
+        new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
+	    
     try:
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
