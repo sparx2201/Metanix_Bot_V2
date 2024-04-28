@@ -13,7 +13,7 @@ import os
 import time
 from helper.utils import add_prefix_suffix
 from config import Config
-from remname import jishubotz
+from plugins.remname import jishubotz
 
 
 app = Client("test", api_id=Config.STRING_API_ID,
