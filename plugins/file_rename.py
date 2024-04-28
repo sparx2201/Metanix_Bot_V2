@@ -53,7 +53,7 @@ async def refunc(client, message):
     reply_message = message.reply_to_message
     if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
         new_name = message.text
-        remname_text = await jishubotz.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
+        remname_text = await db.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
         if remname_text and remname_text in new_name:
             new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
         await message.delete()
@@ -86,7 +86,6 @@ async def refunc(client, message):
             reply_to_message_id=file.id,
             reply_markup=InlineKeyboardMarkup(button)
         )
-
 # Define the callback for the 'upload' buttons
 
 
