@@ -15,6 +15,8 @@ async def handle_upload_settings(bot: Client, message: Message):
         await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(ON))
     elif upload_type == "video":
         await message.reply_text(f"Your current upload format is set to **Video**.", reply_markup=InlineKeyboardMarkup(OFF))
+    else:
+        await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
 
 
 @Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on|upload_document_off|upload_video_off)'))
