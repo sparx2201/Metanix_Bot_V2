@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from helper.database import db
+from helper.database import db, set_upload_type, get_upload_type, delete_upload_type
 
 ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')]]
 OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
