@@ -1,11 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from helper.database import db
-import asyncio
-import os
 from config import Config
-
-app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
 
 # Define the keyboard buttons for upload options
 UPLOAD_OPTIONS = [
@@ -30,7 +26,6 @@ async def handle_upload_buttons(bot, update):
 async def handle_file_upload(bot, message):
     user_id = message.from_user.id
     upload_type = await db.get_upload_type(user_id)
-
     if upload_type == "document":
         await message.reply_text("You have selected to upload as a document.")
     elif upload_type == "video":
