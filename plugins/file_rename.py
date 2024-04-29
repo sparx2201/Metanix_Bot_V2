@@ -4,7 +4,7 @@ import os
 import time
 from pyrogram import Client, filters
 from pyrogram.enums import MessageMediaType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply, Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply, Message, CallbackQuery
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
