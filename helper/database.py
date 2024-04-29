@@ -93,5 +93,15 @@ class Database:
 
     async def delete_remname(self, id):
         await self.col.update_one({'_id': int(id)}, {'$unset': {'remname': ""}})
+        
+    async def set_upload_type(self, id, upload_type):
+        await self.col.update_one({'_id': int(id)}, {'$set': {'upload_type': upload_type}})
+        
+    async def get_upload_type(self, id):
+        user = await self.col.find_one({'_id': int(id)})
+        return user.get('upload_type', None)
+        
+    async def delete_upload_type(self, id):
+        await self.col.update_one({'_id': int(id)}, {'$unset': {'upload_type': ""}})
 
 db = Database(Config.DB_URL, Config.DB_NAME)
