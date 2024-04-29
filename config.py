@@ -17,7 +17,7 @@ class Config(object):
     STRING_SESSION = os.environ.get("STRING_SESSION", "")
 
     # database config
-    DB_NAME = os.environ.get("DB_NAME", "Snow_User_Data")
+    DB_NAME = os.environ.get("DB_NAME", "metadatav2")
     DB_URL = os.environ.get("DB_URL", "")  # ⚠️ Required
 
     # other configs
