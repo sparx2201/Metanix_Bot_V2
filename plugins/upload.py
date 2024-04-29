@@ -19,7 +19,7 @@ async def handle_upload_settings(bot: Client, message: Message):
         await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
 
 
-@Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on|upload_document_off|upload_video_off)'))
+@Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on)'))
 async def set_upload_format(bot: Client, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
