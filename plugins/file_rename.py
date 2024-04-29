@@ -4,7 +4,7 @@ import os
 import time
 from pyrogram import Client, filters
 from pyrogram.enums import MessageMediaType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply, Message, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
@@ -16,41 +16,40 @@ from config import Config
 
 app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
 
-ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')]]
-OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
+# Define a function to handle the 'rename' callback
+@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
+async def rename_start(client, message):
+    file = getattr(message, message.media.value)
+    filename = file.file_name  
+    if file.file_size > 2000 * 1024 * 1024:
+        return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
 
-@Client.on_message(filters.private & filters.command('upload'))
-async def handle_upload_settings(bot: Client, message: Message):
-    ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.message_id)
-    upload_type = await db.get_upload_type(message.from_user.id)
-    await ms.delete()
-    if upload_type == "document":
-        await message.reply_text("Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(OFF))
-    elif upload_type == "video":
-        await message.reply_text("Your current upload format is set to **Video**.", reply_markup=InlineKeyboardMarkup(ON))
-    else:
-        await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
+    try:
+        await message.reply_text(
+            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
+            reply_to_message_id=message.id,  
+            reply_markup=ForceReply(True)
+        )       
+        await asyncio.sleep(30)
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+        await message.reply_text(
+            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
+            reply_to_message_id=message.id,  
+            reply_markup=ForceReply(True)
+        )
+    except:
+        pass
 
-@Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on)'))
-async def set_upload_format(bot: Client, query: CallbackQuery):
-    data = query.data
-    user_id = query.from_user.id
-
-    if data == 'upload_document_on':
-        await db.set_upload_type(user_id, "document")
-        await query.message.edit("Upload format set to **Document**.", reply_markup=InlineKeyboardMarkup(OFF))
-    elif data == 'upload_video_on':
-        await db.set_upload_type(user_id, "video")
-        await query.message.edit("Upload format set to **Video**.", reply_markup=InlineKeyboardMarkup(ON))
-        
+# Define the main message handler for private messages with replies
 @Client.on_message(filters.private & filters.reply)
 async def refunc(client, message):
     reply_message = message.reply_to_message
     if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
         new_name = message.text
-        remname_text = await db.get_remname(message.from_user.id)
+        remname_text = await db.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
         if remname_text and remname_text in new_name:
-            new_name = new_name.replace(remname_text, "")
+            new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
         await message.delete()
         msg = await client.get_messages(message.chat.id, reply_message.id)
         file = msg.reply_to_message
@@ -63,13 +62,21 @@ async def refunc(client, message):
             new_name = new_name + "." + extn
         await reply_message.delete()
 
-        upload_type = await db.get_upload_type(message.from_user.id)
-        if upload_type == "document":
-            await doc(client, message, file, media, new_name, "document")
-        elif upload_type == "video":
-            await doc(client, message, file, media, new_name, "video")
-        elif upload_type == "audio":
-            await doc(client, message, file, media, new_name, "audio")
+        # Use a list to store the inline keyboard buttons
+        button = [
+            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
+        ]
+        if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
+            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
+        elif file.media == MessageMediaType.AUDIO:
+            button.append([InlineKeyboardButton("🎵 Audio", callback_data="upload_audio")])
+
+        # Use a single call to reply with both text and inline keyboard
+        await message.reply(
+            text=f"**Select The Output File Type**\n**• File Name :-**  `{new_name}`",
+            reply_to_message_id=file.id,
+            reply_markup=InlineKeyboardMarkup(button)
+        )
 
 # Define the callback for the 'upload' buttons
 @Client.on_callback_query(filters.regex("upload"))
