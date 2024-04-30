@@ -5,8 +5,8 @@ from config import Config
 
 
 # Define the keyboard buttons for upload options
-ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')]]
-OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
+ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_video_on')]]
+OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_document_on')]]
 
 @Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(bot, message):
