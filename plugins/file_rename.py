@@ -19,64 +19,64 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 # Define a function to handle the 'rename' callback
 #@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 #async def rename_start(client, message):
-    file = getattr(message, message.media.value)
-    filename = file.file_name  
-    if file.file_size > 2000 * 1024 * 1024:
-        return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
+#    file = getattr(message, message.media.value)
+#    filename = file.file_name  
+#    if file.file_size > 2000 * 1024 * 1024:
+#        return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
 
-    try:
-        await message.reply_text(
-            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
-            reply_to_message_id=message.id,  
-            reply_markup=ForceReply(True)
-        )       
-        await asyncio.sleep(30)
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
-        await message.reply_text(
-            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
-            reply_to_message_id=message.id,  
-            reply_markup=ForceReply(True)
-        )
-    except:
-        pass
+#    try:
+#        await message.reply_text(
+#            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
+#            reply_to_message_id=message.id,  
+#            reply_markup=ForceReply(True)
+#        )       
+#        await asyncio.sleep(30)
+#    except FloodWait as e:
+#        await asyncio.sleep(e.value)
+#        await message.reply_text(
+#            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
+#            reply_to_message_id=message.id,  
+#            reply_markup=ForceReply(True)
+#        )
+#    except:
+#        pass
 
 # Define the main message handler for private messages with replies
 #@Client.on_message(filters.private & filters.reply)
 #async def refunc(client, message):
-    reply_message = message.reply_to_message
-    if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
-        new_name = message.text
-        remname_text = await db.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
-        if remname_text and remname_text in new_name:
-            new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
-        await message.delete()
-        msg = await client.get_messages(message.chat.id, reply_message.id)
-        file = msg.reply_to_message
-        media = getattr(file, file.media.value)
-        if not "." in new_name:
-            if "." in media.file_name:
-                extn = media.file_name.rsplit('.', 1)[-1]
-            else:
-                extn = "mkv"
-            new_name = new_name + "." + extn
-        await reply_message.delete()
-
-        # Use a list to store the inline keyboard buttons
-        button = [
-            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
+#   reply_message = message.reply_to_message
+#    if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
+#        new_name = message.text
+#        remname_text = await db.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
+#        if remname_text and remname_text in new_name:
+#            new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
+#        await message.delete()
+#        msg = await client.get_messages(message.chat.id, reply_message.id)
+#        file = msg.reply_to_message
+#        media = getattr(file, file.media.value)
+#        if not "." in new_name:
+#            if "." in media.file_name:
+#                extn = media.file_name.rsplit('.', 1)[-1]
+#            else:
+#                extn = "mkv"
+#            new_name = new_name + "." + extn
+#        await reply_message.delete()
+#
+#        # Use a list to store the inline keyboard buttons
+#        button = [
+#            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
         ]
-        if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
-            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
-        elif file.media == MessageMediaType.AUDIO:
-            button.append([InlineKeyboardButton("🎵 Audio", callback_data="upload_audio")])
-
-        # Use a single call to reply with both text and inline keyboard
-        await message.reply(
-            text=f"**Select The Output File Type**\n**• File Name :-**  `{new_name}`",
-            reply_to_message_id=file.id,
-            reply_markup=InlineKeyboardMarkup(button)
-        )
+#        if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
+#            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
+#        elif file.media == MessageMediaType.AUDIO:
+#            button.append([InlineKeyboardButton("🎵 Audio", callback_data="upload_audio")])
+#
+#        # Use a single call to reply with both text and inline keyboard
+#        await message.reply(
+#            text=f"**Select The Output File Type**\n**• File Name :-**  `{new_name}`",
+#            reply_to_message_id=file.id,
+#            reply_markup=InlineKeyboardMarkup(button)
+#       )
 
 # Define the callback for the 'upload' buttons
 @Client.on_callback_query(filters.private & (filters.document | filters.audio | filters.video))
