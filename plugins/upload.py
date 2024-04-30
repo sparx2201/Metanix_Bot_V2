@@ -1,35 +1,34 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from helper.database import db
-
-ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')]]
-OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
+from config import Config
 
 
+# Define the keyboard buttons for upload options
+UPLOAD_OPTIONS = [
+    [InlineKeyboardButton('📁 Upload Document', callback_data='upload_document')],
+    [InlineKeyboardButton('🎥 Upload Video', callback_data='upload_video')],
+]
 
+# Handle the upload command to choose between document and video uploads
 @Client.on_message(filters.private & filters.command('upload'))
-async def handle_upload_settings(bot: Client, message: Message):
-    print("Received /upload command")
-    ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.message_id)
-    upload_type = await db.get_upload_type(message.from_user.id)
-    await ms.delete()
+async def handle_upload_command(bot, message):
+    await message.reply_text("Please select the upload type:", reply_markup=InlineKeyboardMarkup(UPLOAD_OPTIONS))
+
+# Handle the callback data for upload options
+@Client.on_callback_query(filters.regex(r"upload_(document|video)"))
+async def handle_upload_buttons(bot, update):
+    file_type = update.data.split('_')[1]
+    await db.set_upload_type(update.from_user.id, file_type)
+    await update.answer("Upload type selected successfully.")
+
+# Handle file uploads
+@Client.on_message(filters.private & (filters.document | filters.video))
+async def handle_file_upload(bot, message):
+    user_id = message.from_user.id
+    upload_type = await db.get_upload_type(user_id)
     if upload_type == "document":
-        await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(ON))
+        await message.reply_text("You have selected to upload as a document.")
     elif upload_type == "video":
-        await message.reply_text(f"Your current upload format is set to **Video**.", reply_markup=InlineKeyboardMarkup(OFF))
-    else:
-        await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
-
-@Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on|upload_document_off|upload_video_off)'))
-async def set_upload_format(bot: Client, query: CallbackQuery):
-    data = query.data
-    user_id = query.from_user.id
-
-    if data == 'upload_document_on':
-        await db.set_upload_type(user_id, "document")
-        await query.message.edit("Upload format set to **Document**.", reply_markup=InlineKeyboardMarkup(ON))
-    elif data == 'upload_video_on':
-        await db.set_upload_type(user_id, "video")
-        await query.message.edit("Upload format set to **Video**.", reply_markup=InlineKeyboardMarkup(OFF))
-
+        await message.reply_text("You have selected to upload as a video.")
 
