@@ -19,24 +19,21 @@ async def handle_upload_settings(bot: Client, message: Message):
     else:
         await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
 
-@Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on)'))
+@Client.on_callback_query(filters.regex('.*?(upload_document_on|upload_video_on).*?'))
 async def set_upload_format(bot: Client, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
 
-    print("Received callback query for:", data)
-    print("User ID:", user_id)
-
     if data == 'upload_document_on':
-       #await db.set_upload_type(user_id, "document")
-        new_upload_type = await db.get_upload_type(user_id)
-        await bot.send_message(query.message.chat.id, f"Upload format set to **{new_upload_type.capitalize()}**.")
         await query.message.delete()
+        await db.set_upload_type(user_id, "document")
+        await bot.send_message(query.message.chat.id, f"Upload format set to **document**.")
+   
     elif data == 'upload_video_on':
-       #await db.set_upload_type(user_id, "video")
-        new_upload_type = await db.get_upload_type(user_id)
-        await bot.send_message(query.message.chat.id, f"Upload format set to **{new_upload_type.capitalize()}**.")
         await query.message.delete()
+        await db.set_upload_type(user_id, "video")
+        await bot.send_message(query.message.chat.id, f"Upload format set to **video**.")
+      
 
 from pyrogram import Client, filters
 from helper.database import db  # Assuming db is your Database class instance
