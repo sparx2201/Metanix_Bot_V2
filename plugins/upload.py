@@ -46,13 +46,13 @@ from helper.database import db  # Assuming db is your Database class instance
 async def upload_document(client, message):
     # Get all the text patterns provided in the command
     SnowDev = await message.reply_text("Please Wait ...")
-        await db.set_upload_type(user_id, "document")
+    user_id = message.from_user.id
+    await db.set_upload_type(user_id, "document")
     await SnowDev.edit("**Upload format set to Document ✅**")
 
 @Client.on_message(filters.private & filters.command('video'))
 async def upload_video(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
-        await db.set_upload_type(user_id, "video")
+    user_id = message.from_user.id
+    await db.set_upload_type(user_id, "video")
     await SnowDev.edit("**Upload format set to Video ✅**")
-
-    
