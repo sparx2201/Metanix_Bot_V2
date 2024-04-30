@@ -25,14 +25,14 @@ async def set_upload_format(client, query: CallbackQuery):
     user_id = query.from_user.id
 
     if data == 'upload_document_on':
-        await query.message.delete()
+        #await query.message.delete()
         #await db.set_upload_type(user_id, "document")
-        #await bot.send_message("Upload format set to **document**.")
+        await bot.send_message("Upload format set to **document**.")
    
     elif data == 'upload_video_on':
-        await query.message.delete()
-       # await db.set_upload_type(user_id, "video")
-      #  await bot.send_message("Upload format set to **video**.")
+        #await query.message.delete()
+        #await db.set_upload_type(user_id, "video")
+        await bot.send_message("Upload format set to **video**.")
       
 
 from pyrogram import Client, filters
