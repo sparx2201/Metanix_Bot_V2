@@ -79,23 +79,28 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 #       )
 
 # Define the callback for the 'upload' buttons
+from pyrogram import Client, filters
+from helper.database import db  # Assuming db is your Database class instance
+import os
+import random
+
+
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename_start(client, message):
     file = getattr(message, message.media.value)
     filename = file.file_name  
     if file.file_size > 2000 * 1024 * 1024:
         return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
-    else:
-         pass
+    
     # Creating Directory for Metadata
     if not os.path.isdir("Metadata"):
         os.mkdir("Metadata")
         
-    prefix = await db.get_prefix(update.message.chat.id)
-    suffix = await db.get_suffix(update.message.chat.id)
-    new_name = update.message.text
+    prefix = await db.get_prefix(message.chat.id)
+    suffix = await db.get_suffix(message.chat.id)
+    new_name = message.text
     new_filename_ = new_name.split(":-")[1]
-    remname_text = await db.get_remname(update.message.chat.id)  # Get the remname text from the user's database entry
+    remname_text = await db.get_remname(message.chat.id)  # Get the remname text from the user's database entry
     if remname_text and remname_text in new_filename_:
         new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
         
@@ -103,22 +108,22 @@ async def rename_start(client, message):
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
     except Exception as e:
-        return await update.message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
+        return await message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
 
     file_path = f"downloads/{new_filename}"
-    file = update.message.reply_to_message
+    file = message.reply_to_message
 
-    ms = await update.message.edit("**Trying To Download....**")
+    ms = await message.edit("**Trying To Download....**")
     try:
-        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....**", ms, time.time()))
+        path = await client.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....**", ms, time.time()))
     except Exception as e:
         return await ms.edit(e)
 
-    _bool_metadata = await db.get_metadata(update.message.chat.id)
+    _bool_metadata = await db.get_metadata(message.chat.id)
 
     if _bool_metadata:
         metadata_path = f"Metadata/{new_filename}"
-        metadata = await db.get_metadata_code(update.message.chat.id)
+        metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
 
             await ms.edit("Adding Metadata To File....")
@@ -152,8 +157,8 @@ async def rename_start(client, message):
         pass
     ph_path = None
     media = getattr(file, file.media.value)
-    c_caption = await db.get_caption(update.message.chat.id)
-    c_thumb = await db.get_thumbnail(update.message.chat.id)
+    c_caption = await db.get_caption(message.chat.id)
+    c_thumb = await db.get_thumbnail(message.chat.id)
 
     if c_caption:
         try:
@@ -165,7 +170,7 @@ async def rename_start(client, message):
 
     if media.thumbs or c_thumb:
         if c_thumb:
-            ph_path = await bot.download_media(c_thumb)
+            ph_path = await client.download_media(c_thumb)
             width, height, ph_path = await fix_thumb(ph_path)
         else:
             try:
@@ -175,13 +180,13 @@ async def rename_start(client, message):
                 ph_path = None
                 print(e)
 
-    type = update.data.split("_")[1]
+    upload_type = await db.get_upload_type(message.chat.id)
 
     if media.file_size > 2000 * 1024 * 1024:
         try:
             if upload_type == "document":
 
-                filw = await app.send_document(
+                filw = await client.send_document(
                     Config.LOG_CHANNEL,
                     document=metadata_path if _bool_metadata else file_path,
                     thumb=ph_path,
@@ -192,13 +197,13 @@ async def rename_start(client, message):
                 from_chat = filw.chat.id
                 mg_id = filw.id
                 time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
+                await client.copy_message(message.from_user.id, from_chat, mg_id)
                 await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
+                await client.delete_messages(from_chat, mg_id)
 
             elif upload_type == "video":
-                filw = await app.send_video(
-                    update.message.chat.id,
+                filw = await client.send_video(
+                    message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
@@ -211,9 +216,9 @@ async def rename_start(client, message):
                 from_chat = filw.chat.id
                 mg_id = filw.id
                 time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
+                await client.copy_message(message.from_user.id, from_chat, mg_id)
                 await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
+                await client.delete_messages(from_chat, mg_id)
            
 
         except Exception as e:
@@ -230,16 +235,16 @@ async def rename_start(client, message):
 
         try:
             if upload_type == "document":
-                await bot.send_document(
-                    update.message.chat.id,
+                await client.send_document(
+                    message.chat.id,
                     document=metadata_path if _bool_metadata else file_path,
                     thumb=ph_path,
                     caption=caption,
                     progress=progress_for_pyrogram,
                     progress_args=("**Upload Started....**", ms, time.time()))
             elif upload_type == "video":
-                await bot.send_video(
-                    update.message.chat.id,
+                await client.send_video(
+                    message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
