@@ -65,7 +65,7 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 #        # Use a list to store the inline keyboard buttons
 #        button = [
 #            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
-        ]
+#        ]
 #        if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
 #            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
 #        elif file.media == MessageMediaType.AUDIO:
