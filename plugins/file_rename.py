@@ -17,8 +17,8 @@ from config import Config
 app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
 
 # Define a function to handle the 'rename' callback
-@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
-async def rename_start(client, message):
+#@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
+#async def rename_start(client, message):
     file = getattr(message, message.media.value)
     filename = file.file_name  
     if file.file_size > 2000 * 1024 * 1024:
@@ -42,8 +42,8 @@ async def rename_start(client, message):
         pass
 
 # Define the main message handler for private messages with replies
-@Client.on_message(filters.private & filters.reply)
-async def refunc(client, message):
+#@Client.on_message(filters.private & filters.reply)
+#async def refunc(client, message):
     reply_message = message.reply_to_message
     if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
         new_name = message.text
@@ -79,7 +79,7 @@ async def refunc(client, message):
         )
 
 # Define the callback for the 'upload' buttons
-@Client.on_callback_query(filters.regex("upload"))
+@Client.on_callback_query(filters.private & (filters.document | filters.audio | filters.video))
 async def doc(bot, update):
     # Creating Directory for Metadata
     if not os.path.isdir("Metadata"):
@@ -173,7 +173,7 @@ async def doc(bot, update):
 
     if media.file_size > 2000 * 1024 * 1024:
         try:
-            if type == "document":
+            if upload_type == "document":
 
                 filw = await app.send_document(
                     Config.LOG_CHANNEL,
@@ -190,7 +190,7 @@ async def doc(bot, update):
                 await ms.delete()
                 await bot.delete_messages(from_chat, mg_id)
 
-            elif type == "video":
+            elif upload_type == "video":
                 filw = await app.send_video(
                     update.message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
@@ -208,22 +208,7 @@ async def doc(bot, update):
                 await bot.copy_message(update.from_user.id, from_chat, mg_id)
                 await ms.delete()
                 await bot.delete_messages(from_chat, mg_id)
-            elif type == "audio":
-                filw = await app.send_audio(
-                    update.message.chat.id,
-                    audio=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
-
-                from_chat = filw.chat.id
-                mg_id = filw.id
-                time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
-                await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
+           
 
         except Exception as e:
             os.remove(file_path)
@@ -238,7 +223,7 @@ async def doc(bot, update):
     else:
 
         try:
-            if type == "document":
+            if upload_type == "document":
                 await bot.send_document(
                     update.message.chat.id,
                     document=metadata_path if _bool_metadata else file_path,
@@ -246,7 +231,7 @@ async def doc(bot, update):
                     caption=caption,
                     progress=progress_for_pyrogram,
                     progress_args=("**Upload Started....**", ms, time.time()))
-            elif type == "video":
+            elif upload_type == "video":
                 await bot.send_video(
                     update.message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
@@ -257,15 +242,7 @@ async def doc(bot, update):
                     duration=duration,
                     progress=progress_for_pyrogram,
                     progress_args=("**Upload Started....**", ms, time.time()))
-            elif type == "audio":
-                await bot.send_audio(
-                    update.message.chat.id,
-                    audio=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("**Upload Started....**", ms, time.time()))
+          
         except Exception as e:
             os.remove(file_path)
             if ph_path:
