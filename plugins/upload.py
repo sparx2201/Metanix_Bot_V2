@@ -3,9 +3,8 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, 
 from helper.database import db
 from config import Config
 
-
 # Define the keyboard buttons for upload options
-ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')], 
+ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')],
       [InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
 
 @Client.on_message(filters.private & filters.command('upload'))
@@ -31,10 +30,10 @@ async def set_upload_format(bot: Client, query: CallbackQuery):
     if data == 'upload_document_on':
         await db.set_upload_type(user_id, "document")
         new_upload_type = await db.get_upload_type(user_id)
-        await message.reply_text(f"Upload format set to **{new_upload_type.capitalize()}**.")
-           await query.message.delete()
+        await bot.send_message(query.message.chat.id, f"Upload format set to **{new_upload_type.capitalize()}**.")
+        await query.message.delete()
     elif data == 'upload_video_on':
         await db.set_upload_type(user_id, "video")
         new_upload_type = await db.get_upload_type(user_id)
-        await message.reply_text(f"Upload format set to **{new_upload_type.capitalize()}**.")
-           await query.message.delete()
+        await bot.send_message(query.message.chat.id, f"Upload format set to **{new_upload_type.capitalize()}**.")
+        await query.message.delete()
