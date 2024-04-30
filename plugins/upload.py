@@ -9,7 +9,7 @@ ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document
 OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
 
 @Client.on_message(filters.private & filters.command('upload'))
-async def handle_upload_settings(bot: Client, query: CallbackQuery):
+async def handle_upload_settings(bot, query: CallbackQuery):
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
     upload_type = await db.get_upload_type(message.from_user.id)
     await ms.delete()
@@ -21,7 +21,7 @@ async def handle_upload_settings(bot: Client, query: CallbackQuery):
         await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
 
 @Client.on_callback_query(filters.regex('(upload_document_on|upload_video_on)'))
-async def set_upload_format(bot: Client, query: CallbackQuery):
+async def set_upload_format(bot, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
 
