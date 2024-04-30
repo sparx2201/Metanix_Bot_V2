@@ -7,7 +7,7 @@ OFF = [[InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')
 
 
 
-@Client.on_message(filters.private & filters.command('uploads'))
+@Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(bot: Client, message: Message):
     print("Received /upload command")
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.message_id)
