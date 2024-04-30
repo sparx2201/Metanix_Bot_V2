@@ -37,3 +37,22 @@ async def set_upload_format(bot: Client, query: CallbackQuery):
         new_upload_type = await db.get_upload_type(user_id)
         await bot.send_message(query.message.chat.id, f"Upload format set to **{new_upload_type.capitalize()}**.")
         await query.message.delete()
+
+from pyrogram import Client, filters
+from helper.database import db  # Assuming db is your Database class instance
+
+# REMNAME
+@Client.on_message(filters.private & filters.command('document'))
+async def upload_document(client, message):
+    # Get all the text patterns provided in the command
+    SnowDev = await message.reply_text("Please Wait ...")
+        await db.set_upload_type(user_id, "document")
+    await SnowDev.edit("**Upload format set to Document ✅**")
+
+@Client.on_message(filters.private & filters.command('video'))
+async def upload_video(client, message):
+    SnowDev = await message.reply_text("Please Wait ...")
+        await db.set_upload_type(user_id, "video")
+    await SnowDev.edit("**Upload format set to Video ✅**")
+
+    
