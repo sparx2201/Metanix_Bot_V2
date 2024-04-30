@@ -25,9 +25,16 @@ async def set_upload_format(bot, query):
     data = query.data
     user_id = query.from_user.id
 
+    print("Received callback query for:", data)
+    print("User ID:", user_id)
+
     if data == 'upload_document_on':
         await db.set_upload_type(user_id, "document")
-        await query.message.edit("Upload format set to **Document**.", reply_markup=InlineKeyboardMarkup(OFF))
+        new_upload_type = await db.get_upload_type(user_id)
+        print("New upload type:", new_upload_type)
+        await query.message.edit(f"Upload format set to **{new_upload_type.capitalize()}**.", reply_markup=InlineKeyboardMarkup(OFF))
     elif data == 'upload_video_on':
         await db.set_upload_type(user_id, "video")
-        await query.message.edit("Upload format set to **Video**.", reply_markup=InlineKeyboardMarkup(ON))
+        new_upload_type = await db.get_upload_type(user_id)
+        print("New upload type:", new_upload_type)
+        await query.message.edit(f"Upload format set to **{new_upload_type.capitalize()}**.", reply_markup=InlineKeyboardMarkup(ON))
