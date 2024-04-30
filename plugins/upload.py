@@ -5,8 +5,8 @@ from config import Config
 
 
 # Define the keyboard buttons for upload options
-ON = [InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')]
-OFF = [InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]
+ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document_on')], 
+      [InlineKeyboardButton('Upload as Video', callback_data='upload_video_on')]]
 
 @Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(bot: Client, message: Message):
@@ -14,7 +14,7 @@ async def handle_upload_settings(bot: Client, message: Message):
     upload_type = await db.get_upload_type(message.from_user.id)
     await ms.delete()
     if upload_type == "document":
-        await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(OFF))
+        await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(ON))
     elif upload_type == "video":
         await message.reply_text(f"Your current upload format is set to **Video**.", reply_markup=InlineKeyboardMarkup(ON))
     else:
@@ -29,12 +29,12 @@ async def set_upload_format(bot: Client, query: CallbackQuery):
     print("User ID:", user_id)
 
     if data == 'upload_document_on':
+      await query.message.delete()
         await db.set_upload_type(user_id, "document")
         new_upload_type = await db.get_upload_type(user_id)
-        print("New upload type:", new_upload_type)
-        await query.message.edit(f"Upload format set to **{new_upload_type.capitalize()}**.", reply_markup=InlineKeyboardMarkup(OFF))
+        await message.reply_text(f"Upload format set to **{new_upload_type.capitalize()}**.")
     elif data == 'upload_video_on':
+      await query.message.delete()
         await db.set_upload_type(user_id, "video")
         new_upload_type = await db.get_upload_type(user_id)
-        print("New upload type:", new_upload_type)
-        await query.message.edit(f"Upload format set to **{new_upload_type.capitalize()}**.", reply_markup=InlineKeyboardMarkup(ON))
+        await message.reply_text(f"Upload format set to **{new_upload_type.capitalize()}**.")
