@@ -119,6 +119,9 @@ async def rename_start(client, message):
     except Exception as e:
         return await ms.edit(e)
 
+    # Rename the file automatically
+    os.rename(path, file_path)
+    
     _bool_metadata = await db.get_metadata(message.chat.id)
 
     if _bool_metadata:
