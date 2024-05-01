@@ -183,7 +183,7 @@ async def rename_start(client, message):
                 ph_path = None
                 print(e)
 
-    upload_type = await db.get_upload_type(message.chat.id)
+    upload_type = await db.get_upload_type(message.from_user.id)
 
     if media.file_size > 2000 * 1024 * 1024:
         try:
