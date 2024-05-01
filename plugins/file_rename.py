@@ -93,8 +93,8 @@ async def rename_start(client, message):
         return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
     
     # Creating Directory for Metadata
-    if not os.path.isdir("Metadata"):
-        os.mkdir("Metadata")
+#    if not os.path.isdir("Metadata"):
+#        os.mkdir("Metadata")
         
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
