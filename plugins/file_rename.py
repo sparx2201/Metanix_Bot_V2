@@ -16,74 +16,14 @@ from config import Config
 
 app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
 
-# Define a function to handle the 'rename' callback
-#@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
-#async def rename_start(client, message):
-#    file = getattr(message, message.media.value)
-#    filename = file.file_name  
-#    if file.file_size > 2000 * 1024 * 1024:
-#        return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
-
-#    try:
-#        await message.reply_text(
-#            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
-#            reply_to_message_id=message.id,  
-#            reply_markup=ForceReply(True)
-#        )       
-#        await asyncio.sleep(30)
-#    except FloodWait as e:
-#        await asyncio.sleep(e.value)
-#        await message.reply_text(
-#            text=f"**Please Enter New Filename**\n\n**Old File Name** :- `{filename}`",
-#            reply_to_message_id=message.id,  
-#            reply_markup=ForceReply(True)
-#        )
-#    except:
-#        pass
-
-# Define the main message handler for private messages with replies
-#@Client.on_message(filters.private & filters.reply)
-#async def refunc(client, message):
-#   reply_message = message.reply_to_message
-#    if (reply_message.reply_markup) and isinstance(reply_message.reply_markup, ForceReply):
-#        new_name = message.text
-#        remname_text = await db.get_remname(message.from_user.id)  # Get the remname text from the user's database entry
-#        if remname_text and remname_text in new_name:
-#            new_name = new_name.replace(remname_text, "")  # Remove the remname text from the new filename
-#        await message.delete()
-#        msg = await client.get_messages(message.chat.id, reply_message.id)
-#        file = msg.reply_to_message
-#        media = getattr(file, file.media.value)
-#        if not "." in new_name:
-#            if "." in media.file_name:
-#                extn = media.file_name.rsplit('.', 1)[-1]
-#            else:
-#                extn = "mkv"
-#            new_name = new_name + "." + extn
-#        await reply_message.delete()
-#
-#        # Use a list to store the inline keyboard buttons
-#        button = [
-#            [InlineKeyboardButton("📁 Document", callback_data="upload_document")]
-#        ]
-#        if file.media in [MessageMediaType.VIDEO, MessageMediaType.DOCUMENT]:
-#            button.append([InlineKeyboardButton("🎥 Video", callback_data="upload_video")])
-#        elif file.media == MessageMediaType.AUDIO:
-#            button.append([InlineKeyboardButton("🎵 Audio", callback_data="upload_audio")])
-#
-#        # Use a single call to reply with both text and inline keyboard
-#        await message.reply(
-#            text=f"**Select The Output File Type**\n**• File Name :-**  `{new_name}`",
-#            reply_to_message_id=file.id,
-#            reply_markup=InlineKeyboardMarkup(button)
-#       )
 
 # Define the callback for the 'upload' buttons
 from pyrogram import Client, filters
 from helper.database import db  # Assuming db is your Database class instance
 import os
 import random
-
+import asyncio
+from pyrogram.errors import RPCError
 
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename_start(client, message):
@@ -93,8 +33,9 @@ async def rename_start(client, message):
         return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
     
     # Creating Directory for Metadata
-    if not os.path.isdir("Metadata"):
-        os.mkdir("Metadata")
+    metadata_dir = "Metadata"
+    if not os.path.isdir(metadata_dir):
+        os.mkdir(metadata_dir)
         
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
@@ -116,8 +57,10 @@ async def rename_start(client, message):
     ms = await message.edit("**Trying To Download....**")
     try:
         path = await client.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....**", ms, time.time()))
+    except RPCError as e:
+        return await ms.edit(f"Error downloading file: {e}")
     except Exception as e:
-        return await ms.edit(e)
+        return await ms.edit(f"Error: {e}")
 
     # Rename the file automatically
     os.rename(path, file_path)
@@ -125,25 +68,21 @@ async def rename_start(client, message):
     _bool_metadata = await db.get_metadata(message.chat.id)
 
     if _bool_metadata:
-        metadata_path = f"Metadata/{new_filename}"
+        metadata_path = f"{metadata_dir}/{new_filename}"
         metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
-
-            await ms.edit("Adding Metadata To File....")
-            cmd = f"""ffmpeg -i "{path}" {metadata} "{metadata_path}" """
-
-            process = await asyncio.create_subprocess_shell(
-                cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-            )
-
-            stdout, stderr = await process.communicate()
-            er = stderr.decode()
-
             try:
+                await ms.edit("Adding Metadata To File....")
+                cmd = f"""ffmpeg -i "{path}" {metadata} "{metadata_path}" """
+                process = await asyncio.create_subprocess_shell(
+                    cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                )
+                stdout, stderr = await process.communicate()
+                er = stderr.decode()
                 if er:
                     return await ms.edit(str(er) + "\n\n**Error**")
-            except BaseException:
-                pass
+            except Exception as e:
+                return await ms.edit(f"Error adding metadata: {e}")
         await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying to upload....**")
     else:
         await ms.edit("**Trying to upload....**")
@@ -155,9 +94,9 @@ async def rename_start(client, message):
         if metadata.has("duration"):
             duration = metadata.get('duration').seconds
         parser.close()
+    except Exception as e:
+        return await ms.edit(f"Error getting duration: {e}")
 
-    except:
-        pass
     ph_path = None
     media = getattr(file, file.media.value)
     c_caption = await db.get_caption(message.chat.id)
@@ -188,12 +127,11 @@ async def rename_start(client, message):
     if media.file_size > 2000 * 1024 * 1024:
         try:
             if upload_type == "document":
-
                 filw = await client.send_document(
                     Config.LOG_CHANNEL,
                     document=metadata_path if _bool_metadata else file_path,
                     thumb=ph_path,
-                    caption=caption,
+                   caption=caption,
                     progress=progress_for_pyrogram,
                     progress_args=("**Upload Started....**", ms, time.time()))
 
@@ -224,18 +162,11 @@ async def rename_start(client, message):
                 await client.delete_messages(from_chat, mg_id)
            
 
+        except RPCError as e:
+            return await ms.edit(f"Error uploading file: {e}")
         except Exception as e:
-            os.remove(file_path)
-            if ph_path:
-                os.remove(ph_path)
-            if metadata_path:
-                os.remove(metadata_path)
-            if path:
-                os.remove(path)
-            return await ms.edit(f" Error {e}")
-
+            return await ms.edit(f"Error: {e}")
     else:
-
         try:
             if upload_type == "document":
                 await client.send_document(
@@ -257,15 +188,10 @@ async def rename_start(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=("**Upload Started....**", ms, time.time()))
           
+        except RPCError as e:
+            return await ms.edit(f"Error uploading file: {e}")
         except Exception as e:
-            os.remove(file_path)
-            if ph_path:
-                os.remove(ph_path)
-            if metadata_path:
-                os.remove(metadata_path)
-            if path:
-                os.remove(path)
-            return await ms.edit(f" Error {e}")
+            return await ms.edit(f"Error: {e}")
 
     await ms.delete()
 
