@@ -22,7 +22,7 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 async def doc(bot, update, message):
 
     if  message.file_size > 2000 * 1024 * 1024:
-    return await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
+     await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
     try:
         await message.reply_text(
             text=f"**Renaming File as** :- `{new_filename_}`",
