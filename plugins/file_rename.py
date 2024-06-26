@@ -21,7 +21,7 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename(client, message):
     if  message.file_size > 2000 * 1024 * 1024:
-     await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
+        await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
         return
 
 
