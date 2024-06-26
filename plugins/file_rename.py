@@ -32,7 +32,7 @@ async def rename(client, message):
         media_type = media_preference or "document"  # Use preferred media type or default to document
     elif message.video:
         file_id = message.video.file_id
-        file_name = message.video.file_name"
+        file_name = f"{message.video.file_name}.mp4"
         media_type = media_preference or "video"  # Use preferred media type or default to video
     else:
         return await message.reply_text("Unsupported File Type")
