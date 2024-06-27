@@ -169,7 +169,7 @@ async def rename(bot, message):
                 print("Document uploaded")
             elif upload_type == "video":
                 filw = await app.send_video(
-                    update.message.chat.id,
+                    message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
@@ -200,7 +200,7 @@ async def rename(bot, message):
         try:
             if upload_type == "document":
                 await bot.send_document(
-                    update.message.chat.id,
+                    message.chat.id,
                     document=metadata_path if _bool_metadata else file_path,
                     thumb=ph_path,
                     caption=caption,
@@ -210,7 +210,7 @@ async def rename(bot, message):
                 print("Document uploaded")
             elif upload_type == "video":
                 await bot.send_video(
-                    update.message.chat.id,
+                    message.chat.id,
                     video=metadata_path if _bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
