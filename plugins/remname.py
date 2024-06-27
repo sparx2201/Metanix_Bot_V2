@@ -9,11 +9,9 @@ async def add_remname(client, message):
     
     # Get all the text patterns provided in the command
     remname_text = message.text.split(' ', 1)[1]
-    remname_patterns = [pattern.strip() for pattern in remname_text.split(',')]
 
     SnowDev = await message.reply_text("Please Wait ...")
-    for pattern in remname_patterns:
-        await db.set_remname(message.from_user.id, pattern)
+    await db.set_remname(message.from_user.id, remname_text)
     
     await SnowDev.edit("**Remname Text Saved Successfully ✅**")
 
@@ -26,9 +24,9 @@ async def delete_remname(client, message):
 @Client.on_message(filters.private & filters.command('see_remname'))
 async def see_remname(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
-    remname_texts = await db.get_remname(message.from_user.id)
-    if remname_texts:
-        remname_text_list = '\n'.join(remname_texts)
+    remname_patterns = await db.get_remname(message.from_user.id)
+    if remname_patterns:
+        remname_text_list = '\n'.join(remname_patterns)
         await SnowDev.edit(f"**Your Remname Texts:-**\n\n{remname_text_list}")
     else:
         await SnowDev.edit("**You Don't Have Any Remname Texts ❌**")
