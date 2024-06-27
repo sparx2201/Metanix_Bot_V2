@@ -75,14 +75,14 @@ async def rename(bot, message):
         print(f"Error downloading media: {e}")
         return await ms.edit(e)
 
-    _bool_metadata = await db.get_metadata(message.chat.id)
+    _bool_metadata = await db.get_metadata(update.message.chat.id)
 
-    if _bool_metadata:
+    if (_bool_metadata):
         metadata_path = f"Metadata/{new_filename}"
         metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
-            print("Adding metadata to file")
-            await ms.edit("Adding Metadata To File....")
+
+            await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
             cmd = f"""ffmpeg -y -i "{path}" {metadata} "{metadata_path}" """
 
             process = await asyncio.create_subprocess_shell(
@@ -94,12 +94,11 @@ async def rename(bot, message):
 
             try:
                 if er:
-                    print(f"FFmpeg error: {er}")
                     return await ms.edit(str(er) + "\n\n**Error**")
-            except BaseException as e:
-                print(f"Error processing FFmpeg output: {e}")
+            except BaseException:
                 pass
-        await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying to upload....**")
+        await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+
     else:
         print("No metadata to add")
         await ms.edit("**Trying to upload....**")
