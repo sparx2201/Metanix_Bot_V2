@@ -40,10 +40,10 @@ async def rename(bot, message):
  #       print("Unsupported file type")
  #       return await message.reply_text("Unsupported File Type")
 #
- #   if not os.path.isdir("Metadata"):
-  #      os.mkdir("Metadata")
-  #      print("Metadata directory created")
 
+    if not os.path.isdir("Metadata"):
+        os.mkdir("Metadata")
+        
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
     print(f"Prefix: {prefix}, Suffix: {suffix}")
