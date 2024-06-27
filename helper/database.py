@@ -86,20 +86,12 @@ class Database:
         return user.get('metadata_code', None)
 
     async def set_remname(self, id, remname_text):
-        user = await self.col.find_one({'_id': int(id)})
-        if user:
-            current_patterns = user.get('remname', [])
-            new_patterns = [pattern.strip() for pattern in remname_text.split(',') if pattern.strip() not in current_patterns]
-            current_patterns.extend(new_patterns)
-            await self.col.update_one({'_id': int(id)}, {'$set': {'remname': current_patterns}})
-        else:
-            remname_patterns = [pattern.strip() for pattern in remname_text.split(',')]
-            await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_patterns}}, upsert=True)
+        await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_text}})
 
     async def get_remname(self, id):
         user = await self.col.find_one({'_id': int(id)})
-        return user.get('remname', [])
-    
+        return user.get('remname', None)
+
     async def delete_remname(self, id):
         await self.col.update_one({'_id': int(id)}, {'$unset': {'remname': ""}})
         
