@@ -90,7 +90,7 @@ class Database:
         if user:
             current_patterns = user.get('remname', [])
             if remname_text not in current_patterns:
-            current_patterns.append(remname_text)
+                current_patterns.append(remname_text)
             await self.col.update_one({'_id': int(id)}, {'$set': {'remname': current_patterns}})
         else:
             await self.col.update_one({'_id': int(id)}, {'$set': {'remname': [remname_text]}}, upsert=True)
