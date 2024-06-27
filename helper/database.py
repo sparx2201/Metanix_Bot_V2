@@ -89,12 +89,12 @@ class Database:
         user = await self.col.find_one({'_id': int(id)})
         if user:
             current_patterns = user.get('remname', [])
-            if remname_text not in current_patterns:
-                current_patterns.append(remname_text)
+            new_patterns = [pattern.strip() for pattern in remname_text.split(',') if pattern.strip() not in current_patterns]
+            current_patterns.extend(new_patterns)
             await self.col.update_one({'_id': int(id)}, {'$set': {'remname': current_patterns}})
         else:
-            await self.col.update_one({'_id': int(id)}, {'$set': {'remname': [remname_text]}}, upsert=True)
-
+            remname_patterns = [pattern.strip() for pattern in remname_text.split(',')]
+            await self.col.update_one({'_id': int(id)}, {'$set': {'remname': remname_patterns}}, upsert=True)
 
     async def get_remname(self, id):
         user = await self.col.find_one({'_id': int(id)})
