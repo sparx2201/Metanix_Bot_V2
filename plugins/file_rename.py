@@ -66,10 +66,10 @@ async def rename(bot, message):
     file_path = f"downloads/{new_filename}"
     file = message
 
-    ms = await message.reply_text(text="Trying To Download.....")
+    ms = await message.reply_text(text="Trying To Download.....",  reply_to_message_id=file.id)
 
     try:
-        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started....\nRenaming as {new_filename_} **", ms, time.time()))
+        path = await bot.download_media(message=file, file_name=file_path,  progress=progress_for_pyrogram, progress_args=("**Download Started.... **", ms, time.time()))
         print(f"File downloaded to {path}")
     except Exception as e:
         print(f"Error downloading media: {e}")
@@ -83,7 +83,7 @@ async def rename(bot, message):
         if metadata:
             print("Adding metadata to file")
             await ms.edit("Adding Metadata To File....")
-            cmd = f"""ffmpeg -i "{path}" {metadata} "{metadata_path}" """
+            cmd = f"""ffmpeg -y -i "{path}" {metadata} "{metadata_path}" """
 
             process = await asyncio.create_subprocess_shell(
                 cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
