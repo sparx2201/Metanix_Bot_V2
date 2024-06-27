@@ -26,9 +26,10 @@ async def delete_remname(client, message):
 @Client.on_message(filters.private & filters.command('see_remname'))
 async def see_remname(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
-    remname_text = await db.get_remname(message.from_user.id)
-    if remname_text:
-        await SnowDev.edit(f"**Your Remname Texts:-**\n\n{remname_text}")
+    remname_texts = await db.get_remname(message.from_user.id)
+    if remname_texts:
+        remname_text_list = '\n'.join(remname_texts)
+        await SnowDev.edit(f"**Your Remname Texts:-**\n\n{remname_text_list}")
     else:
         await SnowDev.edit("**You Don't Have Any Remname Texts ❌**")
 
