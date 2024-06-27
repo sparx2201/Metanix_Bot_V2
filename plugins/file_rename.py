@@ -75,7 +75,7 @@ async def rename(bot, message):
         print(f"Error downloading media: {e}")
         return await ms.edit(e)
 
-    _bool_metadata = await db.get_metadata(update.message.chat.id)
+    _bool_metadata = await db.get_metadata(message.chat.id)
 
     if (_bool_metadata):
         metadata_path = f"Metadata/{new_filename}"
