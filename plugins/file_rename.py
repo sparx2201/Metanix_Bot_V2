@@ -51,10 +51,30 @@ async def rename(bot, message):
     new_filename_  = file.file_name 
  #   new_filename_ = new_name.split(":-")[1]
     remname_text = await db.get_remname(message.chat.id)  # Get the remname text from the user's database entry
-    if remname_text and remname_text in new_filename_:
-        new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
-        print(f"Remname text: {remname_text} removed from filename")
+    split_text = remname_text.split(', ')
 
+    remname1 = split_text[0] if len(split_text) > 0 else None
+    remname2 = split_text[1] if len(split_text) > 1 else None
+    remname3 = split_text[2] if len(split_text) > 2 else None
+    remname4 = split_text[3] if len(split_text) > 3 else None
+    remname5 = split_text[4] if len(split_text) > 4 else None
+    
+    if remname1 and remname1 in new_filename_:
+        new_filename_ = new_filename_.replace(remname1, "")  # Remove the remname text from the new filename
+        print(f"Remname text: {remname_text} removed from filename")
+        
+    if remname2 and remname2 in new_filename_:
+        new_filename_ = new_filename_.replace(remname2, "")  # Remove the remname text from the new filename
+        
+    if remname3 and remname3 in new_filename_:
+        new_filename_ = new_filename_.replace(remname3, "")  # Remove the remname text from the new filename
+        
+    if remname4 and remname4 in new_filename_:
+        new_filename_ = new_filename_.replace(remname4, "")  # Remove the remname text from the new filename
+        
+    if remname5 and remname5 in new_filename_:
+        new_filename_ = new_filename_.replace(remname5, "")  # Remove the remname text from the new filename
+        
     try:
         # adding prefix and suffix
         new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
