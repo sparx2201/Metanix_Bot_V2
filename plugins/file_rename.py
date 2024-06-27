@@ -48,8 +48,8 @@ async def rename(client, message):
     suffix = await db.get_suffix(message.chat.id)
     print(f"Prefix: {prefix}, Suffix: {suffix}")
 
-    new_name = file.file_name 
-    new_filename_ = new_name.split(":-")[1]
+    new_filename_  = file.file_name 
+ #   new_filename_ = new_name.split(":-")[1]
     remname_text = await db.get_remname(message.chat.id)  # Get the remname text from the user's database entry
     if remname_text and remname_text in new_filename_:
         new_filename_ = new_filename_.replace(remname_text, "")  # Remove the remname text from the new filename
