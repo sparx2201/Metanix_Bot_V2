@@ -21,33 +21,34 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename(client, message):
     print("Function called")
-    if message.file_size > 2000 * 1024 * 1024:
-        await message.reply_text("Sorry, this bot doesn't support uploading files bigger than 2GB")
-        return
+    file = getattr(message, message.media.value)
+    filename = file.file_name  
+    if file.file_size > 2000 * 1024 * 1024:
+         return await message.reply_text("Sorry Bro This Bot Doesn't Support Uploading Files Bigger Than 2GB")
 
-    if message.document:
-        file_id = message.document.file_id
-        file_name = message.document.file_name
-        media_type = media_preference or "document"  # Use preferred media type or default to document
-        print("Document detected")
-    elif message.video:
-        file_id = message.video.file_id
-        file_name = f"{message.video.file_name}.mp4"
-        media_type = media_preference or "video"  # Use preferred media type or default to video
-        print("Video detected")
-    else:
-        print("Unsupported file type")
-        return await message.reply_text("Unsupported File Type")
-
-    if not os.path.isdir("Metadata"):
-        os.mkdir("Metadata")
-        print("Metadata directory created")
+#    if message.document:
+#        file_id = message.document.file_id
+#        file_name = message.document.file_name
+#        media_type = media_preference or "document"  # Use preferred media type or default to document
+ #       print("Document detected")
+#    elif message.video:
+ #       file_id = message.video.file_id
+ #       file_name = f"{message.video.file_name}.mp4"
+#       media_type = media_preference or "video"  # Use preferred media type or default to video
+ #       print("Video detected")
+ #   else:
+ #       print("Unsupported file type")
+ #       return await message.reply_text("Unsupported File Type")
+#
+ #   if not os.path.isdir("Metadata"):
+  #      os.mkdir("Metadata")
+  #      print("Metadata directory created")
 
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
     print(f"Prefix: {prefix}, Suffix: {suffix}")
 
-    new_name = file_name
+    new_name = filename
     new_filename_ = new_name.split(":-")[1]
     remname_text = await db.get_remname(message.chat.id)  # Get the remname text from the user's database entry
     if remname_text and remname_text in new_filename_:
