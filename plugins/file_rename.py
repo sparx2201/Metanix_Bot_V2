@@ -46,6 +46,7 @@ async def rename(bot, message):
         
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
+    space = \s
     print(f"Prefix: {prefix}, Suffix: {suffix}")
 
     new_filename_  = file.file_name 
@@ -74,6 +75,13 @@ async def rename(bot, message):
         
     if remname5 and remname5 in new_filename_:
         new_filename_ = new_filename_.replace(remname5, "")  # Remove the remname text from the new filename
+
+    if space and space in prefix:
+        prefix = prefix.replace(space, "")
+
+    if space and space in suffix:
+        suffix = suffix.replace(space, "")
+
         
     try:
         # adding prefix and suffix
