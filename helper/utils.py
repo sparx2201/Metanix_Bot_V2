@@ -108,13 +108,13 @@ def add_prefix_suffix(input_string, prefix='', suffix=''):
         if prefix == None:
             if suffix == None:
                 return f"{filename}{extension}"
-            return f"{filename} {suffix}{extension}"
+            return f"{filename}{suffix}{extension}"
         elif suffix == None:
             if prefix == None:
                return f"{filename}{extension}"
             return f"{prefix}{filename}{extension}"
         else:
-            return f"{prefix}{filename} {suffix}{extension}"
+            return f"{prefix}{filename}{suffix}{extension}"
 
 
     else:
