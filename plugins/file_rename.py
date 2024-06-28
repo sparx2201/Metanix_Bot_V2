@@ -46,8 +46,8 @@ async def rename(bot, message):
         
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
+    space = "-s"
     print(f"Prefix: {prefix}, Suffix: {suffix}")
-
 
     
     new_filename_  = file.file_name 
@@ -79,8 +79,17 @@ async def rename(bot, message):
         
 
     try:
-        # adding prefix and suffix
-        new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+        if sapce in prefix and sapce in not suffix:
+             new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+        
+        elif space in not prefix and sapce in suffix:
+            new_filename = add_prefix_ssuffix(new_filename_, prefix, suffix)
+
+        elif space in prefix and sapce in suffix:
+            new_filename = add_sprefix_ssuffix(new_filename_, prefix, suffix)
+
+        else:
+            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
         print(f"New filename: {new_filename}")
     except Exception as e:
         print(f"Error setting prefix/suffix: {e}")
