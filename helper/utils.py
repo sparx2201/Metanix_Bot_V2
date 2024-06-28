@@ -141,3 +141,10 @@ def add_prefix_suffix(input_string, prefix='', suffix='', dbprefix='', dbsuffix=
             return f"{prefix}{filename}{suffix}{extension}"
     else:
         return input_string
+
+async def wrapper_add_prefix_suffix(input_string, prefix='', suffix=''):
+    chat_id = 123  # Replace with actual chat ID
+    dbprefix = await db.get_prefix(chat_id)
+    dbsuffix = await db.get_suffix(chat_id)
+    
+    return add_prefix_suffix(input_string, prefix, suffix, dbprefix, dbsuffix)
