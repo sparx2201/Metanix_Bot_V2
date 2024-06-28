@@ -46,7 +46,7 @@ async def rename(bot, message):
         
     prefix = await db.get_prefix(message.chat.id)
     suffix = await db.get_suffix(message.chat.id)
-    space = '\s'
+    space = "-s"
     print(f"Prefix: {prefix}, Suffix: {suffix}")
 
     new_filename_  = file.file_name 
