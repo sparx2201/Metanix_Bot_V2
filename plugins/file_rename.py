@@ -103,7 +103,7 @@ async def rename(bot, message):
                
         if space in prefix and space not in suffix:
             prefix = prefix.replace(space, "")
-            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
         
         elif space not in prefix and space in suffix:
             suffix = suffix.replace(space, "")
