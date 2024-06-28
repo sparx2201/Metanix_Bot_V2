@@ -5,6 +5,7 @@ from pytz import timezone
 from config import Config, Txt
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import re
+from helper.database import db
 
 
 async def progress_for_pyrogram(current, total, ud_type, message, start):
@@ -100,6 +101,12 @@ async def send_log(b, u):
         )
 
 def add_prefix_suffix(input_string, prefix='', suffix=''):
+
+    dbprefix = await db.get_prefix(message.chat.id)
+    dbsuffix = await db.get_suffix(message.chat.id)
+    space = "-s"
+
+    
     pattern = r'(?P<filename>.*?)(\.\w+)?$'
     match = re.search(pattern, input_string)
     if match:
@@ -108,13 +115,19 @@ def add_prefix_suffix(input_string, prefix='', suffix=''):
         if prefix == None:
             if suffix == None:
                 return f"{filename}{extension}"
-            return f"{filename} {suffix}{extension}"
+            if space and space in dbsuffix:
+                return f"{filename} {suffix}{extension}"
+            return f"{filename}{suffix}{extension}"
         elif suffix == None:
             if prefix == None:
                return f"{filename}{extension}"
-            return f"{prefix} {filename}{extension}"
+            if space and space in dbprefix:
+                return f"{prefix} {filename}{extension}"
+            return f"{prefix}{filename}{extension}"
         else:
-            return f"{prefix} {filename} {suffix}{extension}"
+            if space in dbprefix and space in dbsuffix:
+                return f"{prefix} {filename} {suffix}{extension}"
+            return f"{prefix}{filename}{suffix}{extension}"
 
 
     else:
