@@ -84,39 +84,40 @@ async def rename(bot, message):
         suffix = await db.get_suffix(message.chat.id)
         space = "-s"
 
-        if prefix is None or suffix is None:
-            if suffix is None:
-                if space in prefix:
-                    prefix = prefix.replace(space, "")
-                    new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
-                else:
-                    new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
-                    
-            if prefix is None:
-                if space in prefix:
-                    suffix = suffix.replace(space, "")
-                    new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
-                else:
-                    new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+    if prefix is None and suffix is None:
+        new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
 
-        if prefix is None and suffix is None:
+    elif prefix is None:
+        if space in suffix:
+            suffix = suffix.replace(space, "")
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+        else:
             new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
-               
-        elif space in prefix and space not in suffix:
+
+    elif suffix is None:
+        if space in prefix:
             prefix = prefix.replace(space, "")
             new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
-        
+        else:
+            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+
+    else:
+        if space in prefix and space not in suffix:
+            prefix = prefix.replace(space, "")
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+
         elif space not in prefix and space in suffix:
             suffix = suffix.replace(space, "")
-            new_filename = add_prefix_ssuffix(new_filename_, prefix, suffix)
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
 
         elif space in prefix and space in suffix:
-            suffix = suffix.replace(space, "")
             prefix = prefix.replace(space, "")
-            new_filename = add_sprefix_ssuffix(new_filename_, prefix, suffix)
+            suffix = suffix.replace(space, "")
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
 
         else:
             new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+            
         print(f"New filename: {new_filename}")
     except Exception as e:
         print(f"Error setting prefix/suffix: {e}")
