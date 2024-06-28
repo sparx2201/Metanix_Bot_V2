@@ -100,7 +100,7 @@ async def send_log(b, u):
             f"Dᴀᴛᴇ: {date}\nTɪᴍᴇ: {time_str}\n\nBy: {b.mention}",
         )
 
-def add_prefix_suffix(input_string, prefix='', suffix=''):
+async def add_prefix_suffix(input_string, prefix='', suffix=''):
 
     dbprefix = await db.get_prefix(message.chat.id)
     dbsuffix = await db.get_suffix(message.chat.id)
