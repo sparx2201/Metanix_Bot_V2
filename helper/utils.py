@@ -100,22 +100,32 @@ async def send_log(b, u):
             f"Dᴀᴛᴇ: {date}\nTɪᴍᴇ: {time_str}\n\nBy: {b.mention}",
         )
 
-def add_prefix_suffix(input_string, prefix='', suffix=''):
+def add_prefix_suffix(input_string, prefix='', suffix='', dbprefix='', dbsuffix=''):
     pattern = r'(?P<filename>.*?)(\.\w+)?$'
     match = re.search(pattern, input_string)
+    space = "-s"
+    
     if match:
         filename = match.group('filename')
         extension = match.group(2) or ''
         if prefix == None:
             if suffix == None:
                 return f"{filename}{extension}"
-            return f"{filename} {suffix}{extension}"
+            if space in dbsuffix:
+                return f"{filename} {suffix}{extension}" 
+            return f"{filename}{suffix}{extension}"
+            
         elif suffix == None:
             if prefix == None:
                return f"{filename}{extension}"
-            return f"{prefix} {filename}{extension}"
+            if space in dbprefix:
+               return f"{prefix} {filename}{extension}"
+            return f"{prefix}{filename}{extension}"
+            
         else:
-            return f"{prefix} {filename} {suffix}{extension}"
+            if space in dbprefix and space in dbsuffix:
+                return f"{prefix} {filename} {suffix}{extension}"
+            return f"{prefix}{filename}{suffix}{extension}"
 
 
     else:
