@@ -102,10 +102,10 @@ async def send_log(b, u):
 
 from helper.database import db
 
-async def add_prefix_suffix(input_string, prefix='', suffix=''):
+def add_prefix_suffix(input_string, prefix='', suffix=''):
 
-    dbprefix = await db.get_prefix(message.chat.id)
-    dbsuffix = await db.get_suffix(message.chat.id)
+    dbprefix = db.get_prefix(message.chat.id)
+    dbsuffix = db.get_suffix(message.chat.id)
     space = "-s"
 
     
