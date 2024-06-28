@@ -100,23 +100,44 @@ async def send_log(b, u):
             f"Dᴀᴛᴇ: {date}\nTɪᴍᴇ: {time_str}\n\nBy: {b.mention}",
         )
 
-def add_prefix_suffix(input_string, prefix='', suffix=''):
+from helper.database import db
+
+class db:
+    @staticmethod
+    async def get_prefix(chat_id):
+        # Simulate an asynchronous database call
+        await asyncio.sleep(1)
+        return "async_prefix"
+
+    @staticmethod
+    async def get_suffix(chat_id):
+        # Simulate an asynchronous database call
+        await asyncio.sleep(1)
+        return "async_suffix"
+
+def add_prefix_suffix(input_string, prefix='', suffix='', dbprefix='', dbsuffix=''):
+    space = "-s"
+    
     pattern = r'(?P<filename>.*?)(\.\w+)?$'
     match = re.search(pattern, input_string)
     if match:
         filename = match.group('filename')
         extension = match.group(2) or ''
-        if prefix == None:
-            if suffix == None:
+        if prefix is None:
+            if suffix is None:
                 return f"{filename}{extension}"
-            return f"{filename} {suffix}{extension}"
-        elif suffix == None:
-            if prefix == None:
-               return f"{filename}{extension}"
+            if space and space in dbsuffix:
+                return f"{filename} {suffix}{extension}"
+            return f"{filename}{suffix}{extension}"
+        elif suffix is None:
+            if prefix is None:
+                return f"{filename}{extension}"
+            if space and space in dbprefix:
+                return f"{prefix} {filename}{extension}"
             return f"{prefix}{filename}{extension}"
         else:
-            return f"{prefix}{filename} {suffix}{extension}"
-
-
+            if space in dbprefix and space in dbsuffix:
+                return f"{prefix} {filename} {suffix}{extension}"
+            return f"{prefix}{filename}{suffix}{extension}"
     else:
         return input_string
