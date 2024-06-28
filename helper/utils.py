@@ -109,6 +109,70 @@ def add_prefix_suffix(input_string, prefix='', suffix=''):
         if prefix == None:
             if suffix == None:
                 return f"{filename}{extension}"
+            return f"{filename}{suffix}{extension}"
+        elif suffix == None:
+            if prefix == None:
+               return f"{filename}{extension}"
+            return f"{prefix}{filename}{extension}"
+        else:
+            return f"{prefix}{filename}{suffix}{extension}"
+
+
+    else:
+        return input_string
+
+
+def add_sprefix_suffix(input_string, prefix='', suffix=''):
+    pattern = r'(?P<filename>.*?)(\.\w+)?$'
+    match = re.search(pattern, input_string)
+    if match:
+        filename = match.group('filename')
+        extension = match.group(2) or ''
+        if prefix == None:
+            if suffix == None:
+                return f"{filename}{extension}"
+            return f"{filename}{suffix}{extension}"
+        elif suffix == None:
+            if prefix == None:
+               return f"{filename}{extension}"
+            return f"{prefix} {filename}{extension}"
+        else:
+            return f"{prefix} {filename}{suffix}{extension}"
+
+
+    else:
+        return input_string
+
+def add_prefix_ssuffix(input_string, prefix='', suffix=''):
+    pattern = r'(?P<filename>.*?)(\.\w+)?$'
+    match = re.search(pattern, input_string)
+    if match:
+        filename = match.group('filename')
+        extension = match.group(2) or ''
+        if prefix == None:
+            if suffix == None:
+                return f"{filename}{extension}"
+            return f"{filename} {suffix}{extension}"
+        elif suffix == None:
+            if prefix == None:
+               return f"{filename}{extension}"
+            return f"{prefix}{filename}{extension}"
+        else:
+            return f"{prefix}{filename} {suffix}{extension}"
+
+
+    else:
+        return input_string
+
+def add_sprefix_ssuffix(input_string, prefix='', suffix=''):
+    pattern = r'(?P<filename>.*?)(\.\w+)?$'
+    match = re.search(pattern, input_string)
+    if match:
+        filename = match.group('filename')
+        extension = match.group(2) or ''
+        if prefix == None:
+            if suffix == None:
+                return f"{filename}{extension}"
             return f"{filename} {suffix}{extension}"
         elif suffix == None:
             if prefix == None:
