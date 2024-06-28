@@ -100,15 +100,7 @@ async def send_log(b, u):
             f"Dᴀᴛᴇ: {date}\nTɪᴍᴇ: {time_str}\n\nBy: {b.mention}",
         )
 
-from helper.database import db
-
 def add_prefix_suffix(input_string, prefix='', suffix=''):
-
-    dbprefix = db.get_prefix(message.chat.id)
-    dbsuffix = db.get_suffix(message.chat.id)
-    space = "-s"
-
-    
     pattern = r'(?P<filename>.*?)(\.\w+)?$'
     match = re.search(pattern, input_string)
     if match:
@@ -117,19 +109,13 @@ def add_prefix_suffix(input_string, prefix='', suffix=''):
         if prefix == None:
             if suffix == None:
                 return f"{filename}{extension}"
-            if space and space in dbsuffix:
-                return f"{filename} {suffix}{extension}"
-            return f"{filename}{suffix}{extension}"
+            return f"{filename} {suffix}{extension}"
         elif suffix == None:
             if prefix == None:
                return f"{filename}{extension}"
-            if space and space in dbprefix:
-                return f"{prefix} {filename}{extension}"
             return f"{prefix}{filename}{extension}"
         else:
-            if space in dbprefix and space in dbsuffix:
-                return f"{prefix} {filename} {suffix}{extension}"
-            return f"{prefix}{filename}{suffix}{extension}"
+            return f"{prefix}{filename} {suffix}{extension}"
 
 
     else:
