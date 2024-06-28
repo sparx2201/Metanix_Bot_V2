@@ -78,7 +78,7 @@ async def rename(bot, message):
         
     try:
         # adding prefix and suffix
-        new_filename = await add_prefix_suffix(new_filename_, prefix, suffix)
+        new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
         print(f"New filename: {new_filename}")
     except Exception as e:
         print(f"Error setting prefix/suffix: {e}")
