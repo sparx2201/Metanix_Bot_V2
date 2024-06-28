@@ -5,7 +5,7 @@ from pytz import timezone
 from config import Config, Txt
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import re
-from helper.database import db
+
 
 
 async def progress_for_pyrogram(current, total, ud_type, message, start):
@@ -99,6 +99,8 @@ async def send_log(b, u):
             f"Uꜱᴇʀ: {u.mention}\nIᴅ: `{u.id}`\nUɴ: @{u.username}\n\n"
             f"Dᴀᴛᴇ: {date}\nTɪᴍᴇ: {time_str}\n\nBy: {b.mention}",
         )
+
+from helper.database import db
 
 async def add_prefix_suffix(input_string, prefix='', suffix=''):
 
