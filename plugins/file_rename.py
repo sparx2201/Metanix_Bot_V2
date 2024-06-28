@@ -89,14 +89,14 @@ async def rename(bot, message):
                 prefix = prefix.replace(space, "")
                 new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
             else:
-            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+                new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
 
         if prefix == None:
             if space in prefix:
                 suffix = suffix.replace(space, "")
                 new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
             else:
-            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+                new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
 
         if prefix is None and suffix is None:
             new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
