@@ -79,6 +79,11 @@ async def rename(bot, message):
         
 
     try:
+
+        prefix = await db.get_prefix(message.chat.id)
+        suffix = await db.get_suffix(message.chat.id)
+        space = "-s"
+        
         if sapce in prefix and sapce not in suffix:
              new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
         
