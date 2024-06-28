@@ -79,10 +79,10 @@ async def rename(bot, message):
         
 
     try:
-        if sapce in prefix and sapce in not suffix:
+        if sapce in prefix and sapce not in suffix:
              new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
         
-        elif space in not prefix and sapce in suffix:
+        elif space not in prefix and sapce in suffix:
             new_filename = add_prefix_ssuffix(new_filename_, prefix, suffix)
 
         elif space in prefix and sapce in suffix:
