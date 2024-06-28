@@ -83,14 +83,35 @@ async def rename(bot, message):
         prefix = await db.get_prefix(message.chat.id)
         suffix = await db.get_suffix(message.chat.id)
         space = "-s"
-        
+
+        if suffix == None:
+            if space in prefix:
+                prefix = prefix.replace(space, "")
+                new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+            else:
+            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+
+        if prefix == None:
+            if space in prefix:
+                suffix = suffix.replace(space, "")
+                new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+            else:
+            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+
+        if prefix is None and suffix is None:
+            new_filename = add_prefix_suffix(new_filename_, prefix, suffix)
+               
         if space in prefix and space not in suffix:
-             new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
+            prefix = prefix.replace(space, "")
+            new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
         
         elif space not in prefix and space in suffix:
+            suffix = suffix.replace(space, "")
             new_filename = add_prefix_ssuffix(new_filename_, prefix, suffix)
 
         elif space in prefix and space in suffix:
+            suffix = suffix.replace(space, "")
+            prefix = prefix.replace(space, "")
             new_filename = add_sprefix_ssuffix(new_filename_, prefix, suffix)
 
         else:
