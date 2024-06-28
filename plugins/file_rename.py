@@ -84,13 +84,13 @@ async def rename(bot, message):
         suffix = await db.get_suffix(message.chat.id)
         space = "-s"
         
-        if sapce in prefix and sapce not in suffix:
+        if space in prefix and space not in suffix:
              new_filename = add_sprefix_suffix(new_filename_, prefix, suffix)
         
-        elif space not in prefix and sapce in suffix:
+        elif space not in prefix and space in suffix:
             new_filename = add_prefix_ssuffix(new_filename_, prefix, suffix)
 
-        elif space in prefix and sapce in suffix:
+        elif space in prefix and space in suffix:
             new_filename = add_sprefix_ssuffix(new_filename_, prefix, suffix)
 
         else:
