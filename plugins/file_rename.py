@@ -44,10 +44,12 @@ async def rename(bot, message):
     if not os.path.isdir("Metadata"):
         os.mkdir("Metadata")
         
-    prefix = await db.get_prefix(message.chat.id)
-    suffix = await db.get_suffix(message.chat.id)
+    dbprefix = await db.get_prefix(message.chat.id)
+    dbsuffix = await db.get_suffix(message.chat.id)
     print(f"Prefix: {prefix}, Suffix: {suffix}")
 
+    space = "-s"
+    
     new_filename_  = file.file_name 
  #   new_filename_ = new_name.split(":-")[1]
     remname_text = await db.get_remname(message.chat.id)  # Get the remname text from the user's database entry
@@ -74,7 +76,16 @@ async def rename(bot, message):
         
     if remname5 and remname5 in new_filename_:
         new_filename_ = new_filename_.replace(remname5, "")  # Remove the remname text from the new filename
-
+        
+    if space and space in dbprefix:
+        prefix = dbprefix.replace(space, "")  # Remove the remname text from the new filename
+    else:
+        prefix = dbprefix
+        
+    if space and space in dbsuffix:
+        suffix = dbsuffix.replace(space, "")  # Remove the remname text from the new filename
+    else:
+        suffix = dbsuffix
         
     try:
         # adding prefix and suffix
