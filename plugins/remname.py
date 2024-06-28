@@ -26,7 +26,7 @@ async def see_remname(client, message):
     SnowDev = await message.reply_text("Please Wait ...")
     remname_text = await db.get_remname(message.from_user.id)
     if remname_text:
-        await SnowDev.edit(f"**Your Remname Texts:-**\n\n{remname_text}")
+        await SnowDev.edit(f"**Your Remname Texts:-**\n\n`{remname_text}`")
     else:
         await SnowDev.edit("**You Don't Have Any Remname Texts ❌**")
 
