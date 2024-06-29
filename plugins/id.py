@@ -18,18 +18,6 @@ async def handle_callback_query(client, query: CallbackQuery):
     user_id = query.from_user.id
     print(f"Callback query received: data={data}, user_id={user_id}")
 
-    DOC = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
-         InlineKeyboardButton("Video", callback_data="upload_video_on")],  
-        [InlineKeyboardButton("Close", callback_data="close")]
-    ])
-
-    VID = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
-         InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
-        [InlineKeyboardButton("Close", callback_data="close")]
-    ])
-
     try:
         if data == "upload_document_on":
             await db.set_upload_type(user_id, "document")
@@ -53,3 +41,24 @@ async def handle_id_command(client, message):
     
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
     upload_type = await db.get_upload_type(message.from_user.id)
+    await ms.delete()
+
+    
+    DOC = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
+])
+
+    VID = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
+])
+
+    if upload_type == "document":
+        await message.reply_text(f"Your current upload format : **Document**.", reply_markup=DOC)
+        print(f"Reply sent: Current upload format is Document for user_id={message.from_user.id}")
+    elif upload_type == "video":
+        await message.reply_text(f"Your current upload format : **Video**.", reply_markup=VID)
+        print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
