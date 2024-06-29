@@ -5,13 +5,13 @@ from helper.database import db
 # Handle /id command
 @Client.on_message(filters.private & filters.command('id'))
 async def handle_id_command(client, message):
-    user_id = message.from_user.id
+    print(f"Upload command received from user_id={message.from_user.id}")
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
+    upload_type = await db.get_upload_type(message.from_user.id)
+    print(f"Current upload type for user_id={message.from_user.id} is {upload_type}")
+    await ms.delete()
     
     try:
-        upload_type = await db.get_upload_type(message.from_user.id)
-        print(f"Current upload type for user_id={user_id} is {upload_type}")
-        await ms.delete()
         
         DOC = InlineKeyboardMarkup([
             [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
