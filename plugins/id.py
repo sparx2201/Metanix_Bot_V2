@@ -2,15 +2,23 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from helper.database import db
 
-# Handle /id command
-@Client.on_message(filters.private & filters.command('id'))
-async def handle_id_command(client, message):
 
-    print(f"Current upload type for user_id={message.from_user.id} is {upload_type}")
-    await ms.delete()
+#    print(f"Current upload type for user_id={message.from_user.id} is {upload_type}")
+#    await ms.delete()
     
 
+    DOC = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
+])
 
+    VID = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
+])
+    
 # Handle callback queries
 @Client.on_callback_query()
 async def handle_callback_query(client, query: CallbackQuery):
@@ -44,17 +52,7 @@ async def handle_id_command(client, message):
     await ms.delete()
 
     
-    DOC = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
-     InlineKeyboardButton("Video", callback_data="upload_video_on")],  
-    [InlineKeyboardButton("Close", callback_data="close")]
-])
 
-    VID = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
-     InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
-    [InlineKeyboardButton("Close", callback_data="close")]
-])
 
     if upload_type == "document":
         await message.reply_text(f"Your current upload format : **Document**.", reply_markup=DOC)
