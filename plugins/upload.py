@@ -9,10 +9,6 @@ import humanize
 
 
 
-ON = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Set to Document", callback_data="upload_document_on")],
-    [InlineKeyboardButton("Set to Video", callback_data="upload_video_on")]
-])
 
 # Handle /upload command
 @Client.on_message(filters.private & filters.command('upload'))
@@ -21,6 +17,11 @@ async def handle_upload_settings(client, message):
     # Here we simulate the upload type retrieval; replace this with actual database call if needed
     upload_type = "unknown"  # Simulate the condition where the type is not set yet
     # You can change the value of upload_type to "document" or "video" to simulate different scenarios
+    ON = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Set to Document", callback_data="upload_document_on")],
+    [InlineKeyboardButton("Set to Video", callback_data="upload_video_on")]
+])
+
     
     if upload_type == "document":
         await message.reply_text(
