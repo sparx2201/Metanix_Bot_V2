@@ -41,7 +41,7 @@ async def handle_callback_query(client, query: CallbackQuery):
     print(f"Callback query received: data={data}, user_id={user_id}")
 
     if data == "upload_document_on":
-        await db.delete_remname(user_id)
+        await db.delete_upload_type(user_id)
         await query.message.edit_text(text="Your current upload format : **Document**.", disable_web_page_preview=True, reply_markup=DOC)
         print(f"User ID {user_id} sent in response to callback query")
     
@@ -58,3 +58,9 @@ async def handle_callback_query(client, query: CallbackQuery):
         except:
             await query.message.delete()
             await query.message.continue_propagation()
+
+@Client.on_message(filters.private & filters.command('del'))
+async def handle_id_command(client, message):
+    
+    await db.delete_upload_type(message.from_user.id)
+    await message.reply_text("done")
