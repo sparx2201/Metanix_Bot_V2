@@ -9,23 +9,7 @@ ON = [[InlineKeyboardButton('Upload as Document', callback_data='upload_document
 
 
 
-@Client.on_callback_query()
-async def set_upload_format(client, query: CallbackQuery):
-    data = query.data
-    user_id = query.from_user.id
-    print(f"Callback query received: data={data}, user_id={user_id}")
 
-    if data == "upload_document_on":
-        await query.message.delete()
-        await db.set_upload_type(user_id, "document")
-        await query.message.reply_text("Upload format set to **document**.")
-        print(f"Upload format set to document for user_id={user_id}")
-    
-    elif data == "upload_video_on":
-        await query.message.delete()
-        await db.set_upload_type(user_id, "video")
-        await query.message.reply_text("Upload format set to **video**.")
-        print(f"Upload format set to video for user_id={user_id}")
 
 @Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(client, message):
@@ -43,6 +27,25 @@ async def handle_upload_settings(client, message):
     else:
         await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
         print(f"Reply sent: User needs to select upload format for user_id={message.from_user.id}")
+
+@Client.on_callback_query()
+async def set_upload_format(client, query: CallbackQuery):
+    data = query.data
+    user_id = query.from_user.id
+    print(f"Callback query received: data={data}, user_id={user_id}")
+
+    if data == "upload_document_on":
+        await query.message.delete()
+        await db.set_upload_type(user_id, "document")
+        await query.message.reply_text("Upload format set to **document**.")
+        print(f"Upload format set to document for user_id={user_id}")
+    
+    elif data == "upload_video_on":
+        await query.message.delete()
+        await db.set_upload_type(user_id, "video")
+        await query.message.reply_text("Upload format set to **video**.")
+        print(f"Upload format set to video for user_id={user_id}")
+          
 
 from pyrogram import Client, filters
 from helper.database import db  # Assuming db is your Database class instance
