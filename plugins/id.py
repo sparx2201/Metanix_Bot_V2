@@ -26,11 +26,6 @@ async def handle_id_command(client, message):
         await message.reply_text("Please select the upload format:", reply_markup=ON)
         print(f"Reply sent: User needs to select upload format for user_id={message.from_user.id}")
         
-    print(f"ID command received from user_id={user_id}")
-    await message.reply_text(
-        "Press the button below to check your ID:",
-        reply_markup=CHECK_ID_KEYBOARD
-    )
 
 # Handle callback queries
 @Client.on_callback_query()
