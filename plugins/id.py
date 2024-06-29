@@ -29,12 +29,12 @@ async def handle_callback_query(client, query: CallbackQuery):
     try:
         if data == "upload_document_on":
             await db.set_upload_type(user_id, "document")
-            await query.message.edit_text(text="Your current upload format: **Document**.", disable_web_page_preview=True, reply_markup=DOC)
+            await query.message.edit_text(text="Your current upload format : **Document**.", disable_web_page_preview=True, reply_markup=DOC)
             print(f"Set upload type to Document for user_id={user_id}")
         
         elif data == "upload_video_on":
             await db.set_upload_type(user_id, "video")
-            await query.message.edit_text(text="Your current upload format: **Video**.", disable_web_page_preview=True, reply_markup=VID)
+            await query.message.edit_text(text="Your current upload format : **Video**.", disable_web_page_preview=True, reply_markup=VID)
             print(f"Set upload type to Video for user_id={user_id}")
         
         elif data == "close":
@@ -44,7 +44,7 @@ async def handle_callback_query(client, query: CallbackQuery):
         print(f"Error handling callback query for user_id={user_id}: {e}")
 
 
-@Client.on_message(filters.private & filters.command('del'))
+@Client.on_message(filters.private & filters.command('upload'))
 async def handle_id_command(client, message):
     
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
