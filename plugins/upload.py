@@ -6,7 +6,10 @@ import logging
 from pyrogram.errors import FloodWait
 import humanize
 
-
+ON = [
+    [InlineKeyboardButton("Set to Document", callback_data="upload_document_on")],
+    [InlineKeyboardButton("Set to Video", callback_data="upload_video_on")]
+]
 
 
 
@@ -14,32 +17,19 @@ import humanize
 @Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(client, message):
     print(f"Upload command received from user_id={message.from_user.id}")
-    # Here we simulate the upload type retrieval; replace this with actual database call if needed
-    upload_type = "unknown"  # Simulate the condition where the type is not set yet
-    # You can change the value of upload_type to "document" or "video" to simulate different scenarios
-    ON = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Set to Document", callback_data="upload_document_on")],
-    [InlineKeyboardButton("Set to Video", callback_data="upload_video_on")]
-])
-
+    ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
+    upload_type = await db.get_upload_type(message.from_user.id)
+    print(f"Current upload type for user_id={message.from_user.id} is {upload_type}")
+    await ms.delete()
     
     if upload_type == "document":
-        await message.reply_text(
-            "Your current upload format is set to **Document**.",
-            reply_markup=ON
-        )
+        await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=InlineKeyboardMarkup(ON))
         print(f"Reply sent: Current upload format is Document for user_id={message.from_user.id}")
     elif upload_type == "video":
-        await message.reply_text(
-            "Your current upload format is set to **Video**.",
-            reply_markup=ON
-        )
+        await message.reply_text(f"Your current upload format is set to **Video**.", reply_markup=InlineKeyboardMarkup(ON))
         print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
     else:
-        await message.reply_text(
-            "Please select the upload format:",
-            reply_markup=ON
-        )
+        await message.reply_text("Please select the upload format:", reply_markup=InlineKeyboardMarkup(ON))
         print(f"Reply sent: User needs to select upload format for user_id={message.from_user.id}")
 
 # Handle callback queries
@@ -50,16 +40,14 @@ async def set_upload_format(client, query: CallbackQuery):
     print(f"Callback query received: data={data}, user_id={user_id}")
 
     if data == "upload_document_on":
-        await query.message.delete()
-        # Simulate setting the upload type; replace this with actual database call if needed
-        upload_type = "document"
+#        await query.message.delete()
+#        await db.set_upload_type(user_id, "document")
         await query.message.reply_text("Upload format set to **document**.")
         print(f"Upload format set to document for user_id={user_id}")
     
     elif data == "upload_video_on":
         await query.message.delete()
-        # Simulate setting the upload type; replace this with actual database call if needed
-        upload_type = "video"
+        await db.set_upload_type(user_id, "video")
         await query.message.reply_text("Upload format set to **video**.")
         print(f"Upload format set to video for user_id={user_id}")
 
