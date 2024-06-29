@@ -7,15 +7,15 @@ from helper.database import db
 #    await ms.delete()
     
 
-    DOC = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
+DOC = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document ✅", callback_data="upload_document_on"), 
      InlineKeyboardButton("Video", callback_data="upload_video_on")],  
     [InlineKeyboardButton("Close", callback_data="close")]
 ])
 
-    VID = InlineKeyboardMarkup([
+VID = InlineKeyboardMarkup([
     [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
-     InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
+     InlineKeyboardButton("Video ✅", callback_data="upload_video_on")],  
     [InlineKeyboardButton("Close", callback_data="close")]
 ])
     
