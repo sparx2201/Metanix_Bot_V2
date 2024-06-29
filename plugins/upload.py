@@ -13,7 +13,7 @@ ON = InlineKeyboardMarkup([
 ])
 
 # Handle /upload command
-@app.on_message(filters.private & filters.command('upload'))
+@Client.on_message(filters.private & filters.command('upload'))
 async def handle_upload_settings(client, message):
     print(f"Upload command received from user_id={message.from_user.id}")
     # Here we simulate the upload type retrieval; replace this with actual database call if needed
@@ -40,7 +40,7 @@ async def handle_upload_settings(client, message):
         print(f"Reply sent: User needs to select upload format for user_id={message.from_user.id}")
 
 # Handle callback queries
-@app.on_callback_query()
+@Client.on_callback_query()
 async def set_upload_format(client, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
