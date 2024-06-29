@@ -12,8 +12,8 @@ async def handle_id_command(client, message):
     await ms.delete()
 
     ON = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Set to Document", callback_data="upload_document_on")],
-    [InlineKeyboardButton("Set to Video", callback_data="upload_video_on")]
+    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on")],
+    [InlineKeyboardButton("Video", callback_data="upload_video_on")]
 ])
 
     if upload_type == "document":
