@@ -15,13 +15,13 @@ async def set_upload_format(client, query: CallbackQuery):
     user_id = query.from_user.id
     print(f"Callback query received: data={data}, user_id={user_id}")
 
-    if data == 'upload_document_on':
+    if data == "upload_document_on":
         await query.message.delete()
         await db.set_upload_type(user_id, "document")
         await query.message.reply_text("Upload format set to **document**.")
         print(f"Upload format set to document for user_id={user_id}")
     
-    elif data == 'upload_video_on':
+    elif data == "upload_video_on":
         await query.message.delete()
         await db.set_upload_type(user_id, "video")
         await query.message.reply_text("Upload format set to **video**.")
