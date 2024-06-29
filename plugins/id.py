@@ -8,7 +8,7 @@ CHECK_ID_KEYBOARD = InlineKeyboardMarkup([
 ])
 
 # Handle /id command
-@app.on_message(filters.private & filters.command('id'))
+@Client.on_message(filters.private & filters.command('id'))
 async def handle_id_command(client, message):
     user_id = message.from_user.id
     print(f"ID command received from user_id={user_id}")
@@ -18,7 +18,7 @@ async def handle_id_command(client, message):
     )
 
 # Handle callback queries
-@app.on_callback_query()
+@Client.on_callback_query()
 async def handle_callback_query(client, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
