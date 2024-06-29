@@ -41,40 +41,7 @@ async def handle_id_command(client, message):
         await ms.delete()
 
 # Handle callback queries
-@Client.on_callback_query()
-async def handle_callback_query(client, query: CallbackQuery):
-    data = query.data
-    user_id = query.from_user.id
-    print(f"Callback query received: data={data}, user_id={user_id}")
 
-    DOC = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
-         InlineKeyboardButton("Video", callback_data="upload_video_on")],  
-        [InlineKeyboardButton("Close", callback_data="close")]
-    ])
-
-    VID = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
-         InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
-        [InlineKeyboardButton("Close", callback_data="close")]
-    ])
-
-    try:
-        if data == "upload_document_on":
-            await db.set_upload_type(user_id, "document")
-            await query.message.edit_text(text="Your current upload format: **Document**.", disable_web_page_preview=True, reply_markup=DOC)
-            print(f"Set upload type to Document for user_id={user_id}")
-        
-        elif data == "upload_video_on":
-            await db.set_upload_type(user_id, "video")
-            await query.message.edit_text(text="Your current upload format: **Video**.", disable_web_page_preview=True, reply_markup=VID)
-            print(f"Set upload type to Video for user_id={user_id}")
-        
-        elif data == "close":
-            await query.message.delete()
-            print(f"Closed message for user_id={user_id}")
-    except Exception as e:
-        print(f"Error handling callback query for user_id={user_id}: {e}")
 
 
 @Client.on_message(filters.private & filters.command('del'))
