@@ -5,6 +5,7 @@ from helper.database import db
 # Handle /id command
 @Client.on_message(filters.private & filters.command('id'))
 async def handle_id_command(client, message):
+    
     user_id = message.from_user.id
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
     upload_type = await db.get_upload_type(message.from_user.id)
@@ -23,7 +24,7 @@ async def handle_id_command(client, message):
     [InlineKeyboardButton("Close", callback_data="close")]
 ])
 
-    if upload_type == None:
+    if upload_type == "document":
         await message.reply_text(f"Your current upload format : **Document**.", reply_markup=DOC)
         print(f"Reply sent: Current upload format is Document for user_id={message.from_user.id}")
     elif upload_type == "video":
@@ -41,7 +42,7 @@ async def handle_callback_query(client, query: CallbackQuery):
     print(f"Callback query received: data={data}, user_id={user_id}")
 
     if data == "upload_document_on":
-        await db.delete_upload_type(user_id)
+        await db.set_upload_type(user_id, "document")
         await query.message.edit_text(text="Your current upload format : **Document**.", disable_web_page_preview=True, reply_markup=DOC)
         print(f"User ID {user_id} sent in response to callback query")
     
