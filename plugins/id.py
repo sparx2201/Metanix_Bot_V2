@@ -11,21 +11,27 @@ async def handle_id_command(client, message):
     print(f"Current upload type for user_id={message.from_user.id} is {upload_type}")
     await ms.delete()
 
-    ON = InlineKeyboardMarkup([
-    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on")],
-    [InlineKeyboardButton("Video", callback_data="upload_video_on")]
+    DOC = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document ✔", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
 ])
 
-    if upload_type == "document":
-        await message.reply_text(f"Your current upload format is set to **Document**.", reply_markup=ON)
+    VID = InlineKeyboardMarkup([
+    [InlineKeyboardButton("Document", callback_data="upload_document_on"), 
+     InlineKeyboardButton("Video ✔", callback_data="upload_video_on")],  
+    [InlineKeyboardButton("Close", callback_data="close")]
+])
+
+    if upload_type == None:
+        await message.reply_text(f"Your current upload format : **Document**.", reply_markup=DOC)
         print(f"Reply sent: Current upload format is Document for user_id={message.from_user.id}")
     elif upload_type == "video":
-        await message.reply_text(f"Your current upload format is set to **Video**.", reply_markup=ON)
+        await message.reply_text(f"Your current upload format : **Video**.", reply_markup=VID)
         print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
-    else:
-        await message.reply_text("Please select the upload format:", reply_markup=ON)
-        print(f"Reply sent: User needs to select upload format for user_id={message.from_user.id}")
-        
+
+
+
 
 # Handle callback queries
 @Client.on_callback_query()
@@ -35,6 +41,20 @@ async def handle_callback_query(client, query: CallbackQuery):
     print(f"Callback query received: data={data}, user_id={user_id}")
 
     if data == "upload_document_on":
-        await query.message.delete()
-        await query.message.reply_text("Upload format set to **document**.")
+        await db.delete_remname(user_id)
+        await query.message.edit_text(text="Your current upload format : **Document**.", disable_web_page_preview=True, reply_markup=DOC)
         print(f"User ID {user_id} sent in response to callback query")
+    
+    elif data == "upload_video_on":
+        await db.set_upload_type(user_id, "video")
+        await query.message.edit_text(text="Your current upload format :**Video**.", disable_web_page_preview=True, reply_markup=VID)
+        print(f"User ID {user_id} sent in response to callback query")
+        
+    elif data == "close":
+        try:
+            await query.message.delete()
+            await query.message.reply_to_message.delete()
+            await query.message.continue_propagation()
+        except:
+            await query.message.delete()
+            await query.message.continue_propagation()
