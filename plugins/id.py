@@ -35,5 +35,6 @@ async def handle_callback_query(client, query: CallbackQuery):
     print(f"Callback query received: data={data}, user_id={user_id}")
 
     if data == "upload_document_on":
+        await query.message.delete()
         await query.message.reply_text("Upload format set to **document**.")
         print(f"User ID {user_id} sent in response to callback query")
