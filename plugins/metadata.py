@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from helper.database import db
 from pyromod.exceptions import ListenerTimeout
-from config import Txt
+from config import Txt, Config
 
 
 ON = [[InlineKeyboardButton('Metadata On ✅', callback_data='metadata_1')], [
@@ -13,6 +13,10 @@ OFF = [[InlineKeyboardButton('Metadata Off ❌', callback_data='metadata_0')], [
 
 @Client.on_message(filters.private & filters.command('metadata'))
 async def handle_metadata(bot: Client, message: Message):
+
+    if message.from_user.id not in Config.ADMIN:
+        await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use my features")
+        return
 
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
     bool_metadata = await db.get_metadata(message.from_user.id)
