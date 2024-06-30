@@ -150,6 +150,6 @@ async def handle_id_command(client, message):
         
 @Client.on_message(filters.private & filters.command('imp'))
 async def imp(client, message):
-    await message.reply_text(f"hi", reply_markup=CLS)
+    await message.reply_text("hi", reply_markup=CLS)
 
 
