@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
 from helper.database import db
-from config import Config, Txt
+from config import Config, Txt, ADMINS
 import humanize
 from time import sleep
 
@@ -135,7 +135,7 @@ from helper.database import db
 
 
 
-@Client.on_message(filters.private & filters.command('upload'))
+@Client.on_message(filters.private & filters.command('upload') & filters.user(Config.ADMIN))
 async def handle_id_command(client, message):
     
     ms = await message.reply_text("**Please Wait...**", reply_to_message_id=message.id)
@@ -150,7 +150,7 @@ async def handle_id_command(client, message):
         await message.reply_text(f"Your current upload format : **Video**.", reply_markup=VID)
         print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
         
-@Client.on_message(filters.private & filters.command('imp_notes'))
+@Client.on_message(filters.private & filters.command('imp_notes') & filters.user(Config.ADMIN))
 async def imp(client, message):
 
     await message.reply_text("If Prefix/Suffix or both don't existed and you are\nadding yours Prefix/Suffix then use space in it\n\nspace = '-s'\nSet Prefix = {prefix}-s\nSet Suffix = -s{suffix}\n\nIf you are removing existed Prefix/Suffix by using Remname and\nAdding your Prefix/Suffix  then don't use space in it\n\nspace = '-s'\nSet Prefix = {prefix}\nSet Suffix = {suffix}", reply_markup=CLS)
