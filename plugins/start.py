@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
 from helper.database import db
-from config import Config, Txt, ADMIN
+from config import Config, Txt
 import humanize
 from time import sleep
 
