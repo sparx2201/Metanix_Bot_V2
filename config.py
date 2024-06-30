@@ -76,7 +76,10 @@ Exᴀᴍᴩʟᴇ:- <code> /set_caption 📕 Fɪʟᴇ Nᴀᴍᴇ: {filename}
 ⏰ Dᴜʀᴀᴛɪᴏɴ: {duration} </code>
 
 ✏️ <b><u>Hᴏᴡ Tᴏ Rᴇɴᴀᴍᴇ A Fɪʟᴇ</u></b>
-<b>•></b> Sᴇɴᴅ Aɴy Fɪʟᴇ Aɴᴅ Tyᴩᴇ Nᴇᴡ Fɪʟᴇ Nɴᴀᴍᴇ \nAɴᴅ Aᴇʟᴇᴄᴛ Tʜᴇ Fᴏʀᴍᴀᴛ [ document, video, audio ].           
+<b>•></b> Sᴇɴᴅ Fɪʟᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ Rᴇɴᴀᴍᴇ I Wɪʟʟ Aᴜᴛᴏ Rᴇɴᴀᴍᴇ ɪᴛ Wɪᴛʜ Yᴏᴜʀ Pʀᴇғɪx, Sᴜғғɪx, Mᴇᴛᴀᴅᴀᴛᴀ, Rᴇᴍɴᴀᴍᴇ, Cᴀᴘᴛɪᴏɴ.
+
+Nᴏᴛᴇ : /upload - Fɪʀsᴛ Sᴇᴛ Yᴏᴜʀ 
+Uᴘʟᴏᴀᴅ Tʏᴘᴇ [ᴅᴏᴄ/ᴠɪᴅ].           
 
 ⚙ <b><u>Aᴅᴠᴀɴᴄᴇ Rᴇɴᴀᴍᴇ + Mᴇᴛᴀᴅᴀᴛᴀ</u></b>
 /metadata - To Set & Change your metadata code
@@ -86,6 +89,21 @@ Exᴀᴍᴩʟᴇ:- <code> /set_caption 📕 Fɪʟᴇ Nᴀᴍᴇ: {filename}
 /set_suffix - To Set Your Suffix
 /see_suffix - To See Your Suffix
 /del_suffix - Delete Your Suffix
+
+⚙ <b><u>Rᴇᴍɴᴀᴍᴇ Fᴇᴀᴛᴜʀᴇ</u></b>
+
+Remname = Words you want to Remove
+
+<b>•></b> /set_remname - To Set Remname Words 
+ex- <code>/set_remname Text1, Text2, Text3 [Max 5 Words]</code>
+
+<b>•></b> /see_remname - To View Your Remname Words
+<b>•></b> /del_remname - To Delete Your Remname Words
+
+⚙ <b><u>Iᴍᴘᴏʀᴛᴀɴᴛ Nᴏᴛᴇs</u></b>
+
+/imp_notes -Important Notes for Use 
+of Prefix/Suffix/Remname
 
 """
 
