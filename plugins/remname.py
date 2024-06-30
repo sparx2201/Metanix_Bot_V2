@@ -5,7 +5,7 @@ from helper.database import db  # Assuming db is your Database class instance
 @Client.on_message(filters.private & filters.command('set_remname'))
 async def add_remname(client, message):
     if len(message.command) == 1:
-        return await message.reply_text("**__Give The Remname Text__\n\nExample:- `/set_remname text_pattern`**")
+        return await message.reply_text("**__Give The Remname Text__\n\nExample:- `/set_remname Text1, Text2, Text3 [Max 5 Words]`**")
     
     # Get the entire text provided in the command
     remname_text = message.text.split(' ', 1)[1]
