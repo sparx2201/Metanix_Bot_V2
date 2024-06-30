@@ -1,9 +1,15 @@
 from pyrogram import Client, filters
 from helper.database import db  # Assuming db is your Database class instance
+from config import Config
 
 # REMNAME
 @Client.on_message(filters.private & filters.command('set_remname'))
 async def add_remname(client, message):
+    
+    if message.from_user.id not in Config.ADMIN:
+        await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use my features")
+        return
+        
     if len(message.command) == 1:
         return await message.reply_text("**__Give The Remname Text__\n\nExample:- `/set_remname Text1, Text2, Text3 [Max 5 Words]`**")
     
