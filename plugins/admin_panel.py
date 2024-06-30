@@ -10,6 +10,9 @@ logger.setLevel(logging.INFO)
  
 @Client.on_message(filters.command(["stats", "status"]) & filters.user(Config.ADMIN))
 async def get_stats(bot, message):
+
+
+     
     total_users = await db.total_users_count()
     uptime = time.strftime("%Hh%Mm%Ss", time.gmtime(time.time() - Config.BOT_UPTIME))    
     start_t = time.time()
@@ -22,12 +25,22 @@ async def get_stats(bot, message):
 #Restart to cancell all process 
 @Client.on_message(filters.private & filters.command("restart") & filters.user(Config.ADMIN))
 async def restart_bot(b, m):
+
+    if message.from_user.id not in Config.OWNER:
+     await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use this features")
+     return
+     
     await m.reply_text("🔄__Rᴇꜱᴛᴀʀᴛɪɴɢ.....__")
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 @Client.on_message(filters.command("broadcast") & filters.user(Config.ADMIN) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
+
+    if message.from_user.id not in Config.OWNER:
+     await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use this features")
+     return
+     
     await bot.send_message(Config.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
     all_users = await db.get_all_users()
     broadcast_msg = m.reply_to_message
