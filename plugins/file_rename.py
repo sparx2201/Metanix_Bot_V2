@@ -18,7 +18,7 @@ app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HAS
 
 
 # Define the callback for the 'upload' buttons
-@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
+@Client.on_message(filters.private & (filters.document | filters.audio | filters.video) & filters.user(Config.ADMIN))
 async def rename(bot, message):
     print("Function called")
     file = getattr(message, message.media.value)
