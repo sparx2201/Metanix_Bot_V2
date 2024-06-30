@@ -1,9 +1,13 @@
 from pyrogram import Client, filters, enums
 from helper.database import db
-
+from config import Config
 
 @Client.on_message(filters.private & filters.command('set_prefix'))
 async def add_caption(client, message):
+    
+    if message.from_user.id not in Config.ADMIN:
+        await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use my features")
+        return
 
     if len(message.command) == 1:
         return await message.reply_text("**__Give The Prefix__\n\nExᴀᴍᴩʟᴇ:- `/set_prefix @MetaNiXbot`**")
@@ -21,7 +25,7 @@ async def delete_prefix(client, message):
     if not prefix:
         return await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ᴘʀᴇꜰɪx**__")
     await db.set_prefix(message.from_user.id, None)
-    await SnowDev.edit("__**❌️ ᴘʀᴇꜰɪx ᴅᴇʟᴇᴛᴇᴅ**__")
+    await SnowDev.edit("__**ᴘʀᴇꜰɪx ᴅᴇʟᴇᴛᴇᴅ**__🗑️")
 
 
 @Client.on_message(filters.private & filters.command('see_prefix'))
@@ -32,12 +36,16 @@ async def see_caption(client, message):
     if prefix:
         await SnowDev.edit(f"**ʏᴏᴜʀ ᴘʀᴇꜰɪx:-**\n\n`{prefix}`")
     else:
-        await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ᴘʀᴇꜰɪx**__")
+        await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ᴘʀᴇꜰɪx**__❌")
 
 
 # SUFFIX
 @Client.on_message(filters.private & filters.command('set_suffix'))
 async def add_csuffix(client, message):
+
+    if message.from_user.id not in Config.ADMIN:
+        await message.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use my features")
+        return
 
     if len(message.command) == 1:
         return await message.reply_text("**__Give The Suffix__\n\nExᴀᴍᴩʟᴇ:- `/set_suffix @MetaNiXbot`**")
@@ -55,7 +63,7 @@ async def delete_suffix(client, message):
     if not suffix:
         return await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ꜱᴜꜰꜰɪx**__")
     await db.set_suffix(message.from_user.id, None)
-    await SnowDev.edit("__**❌️ ꜱᴜꜰꜰɪx ᴅᴇʟᴇᴛᴇᴅ**__")
+    await SnowDev.edit("__**ꜱᴜꜰꜰɪx ᴅᴇʟᴇᴛᴇᴅ**__🗑️")
 
 
 @Client.on_message(filters.private & filters.command('see_suffix'))
@@ -66,7 +74,7 @@ async def see_csuffix(client, message):
     if suffix:
         await SnowDev.edit(f"**ʏᴏᴜʀ ꜱᴜꜰꜰɪx:-**\n\n`{suffix}`")
     else:
-        await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ꜱᴜꜰꜰɪx**__")
+        await SnowDev.edit("__** ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴʏ ꜱᴜꜰꜰɪx**__❌")
 
 
 
