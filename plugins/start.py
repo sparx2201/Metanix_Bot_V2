@@ -148,7 +148,4 @@ async def handle_id_command(client, message):
         await message.reply_text(f"Your current upload format : **Video**.", reply_markup=VID)
         print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
 
-@Client.on_message(filters.private & filters.command('imp_notes'))
-async def imp(client, message):
-    await message.reply_text(f"hi", reply_markup=CLS)
 
