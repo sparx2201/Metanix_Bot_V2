@@ -38,6 +38,7 @@ VID = InlineKeyboardMarkup([
     [InlineKeyboardButton("Close", callback_data="close")]
 ])
 
+CLS = InlineKeyboardMarkup([InlineKeyboardButton("Close", callback_data="close")])
 
 @Client.on_callback_query()
 async def cb_handler(client, query: CallbackQuery):
@@ -146,3 +147,7 @@ async def handle_id_command(client, message):
     elif upload_type == "video":
         await message.reply_text(f"Your current upload format : **Video**.", reply_markup=VID)
         print(f"Reply sent: Current upload format is Video for user_id={message.from_user.id}")
+
+@Client.on_message(filters.private & filters.command('imp_notes'))
+    await message.reply_text(f"If Prefix/Suffix or both don't existed and you are\nadding yours Prefix/Suffix then use space in it\n\nspace = '-s'\nSet Prefix = {prefix}-s\nSet Suffix = -s{suffix}\n\nIf you are removing existed Prefix/Suffix by using Remname and\nAdding your Prefix/Suffix  then don't use space in it\n\nspace = '-s'\nSet Prefix = {prefix}\nSet Suffix = {suffix}", reply_markup=CLS)
+
