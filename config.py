@@ -90,21 +90,6 @@ Uᴘʟᴏᴀᴅ Tʏᴘᴇ [ᴅᴏᴄ/ᴠɪᴅ].
 /see_suffix - To See Your Suffix
 /del_suffix - Delete Your Suffix
 
-⚙ <b><u>Rᴇᴍɴᴀᴍᴇ Fᴇᴀᴛᴜʀᴇ</u></b>
-
-Remname = Words you want to Remove
-
-<b>•></b> /set_remname - To Set Remname Words 
-ex- <code>/set_remname Text1, Text2, Text3 [Max 5 Words]</code>
-
-<b>•></b> /see_remname - To View Your Remname Words
-<b>•></b> /del_remname - To Delete Your Remname Words
-
-⚙ <b><u>Iᴍᴘᴏʀᴛᴀɴᴛ Nᴏᴛᴇs</u></b>
-
-/imp_notes -Important Notes for Use 
-of Prefix/Suffix/Remname
-
 """
 
     SEND_METADATA = """
