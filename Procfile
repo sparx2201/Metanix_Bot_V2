@@ -1,1 +1,1 @@
-web: python bot.py 
+web: ./ffmpeg_heroku_buildpack.sh && python bot.py 
