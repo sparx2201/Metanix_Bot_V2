@@ -158,6 +158,7 @@ async def rename(bot, message):
             try:
                 if er:
                     return await ms.edit(str(er) + "\n\n**Error**")
+                    print(f"{er}")
             except BaseException:
                 pass
         await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
