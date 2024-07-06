@@ -129,10 +129,10 @@ async def rename(bot, message):
     file_path = f"downloads/{new_filename}"
     file = message
 
-    ms = await message.reply_text(text="Trying To Download.....",  reply_to_message_id=file.id)
+    ms = await message.reply_text(text="Trying To Download.....", reply_to_message_id=file.id)
 
     try:
-        path = await bot.download_media(message=file, file_name=file_path,  progress=progress_for_pyrogram, progress_args=("**Download Started.... **", ms, time.time()))
+        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("**Download Started.... **", ms, time.time()))
         print(f"File downloaded to {path}")
     except Exception as e:
         print(f"Error downloading media: {e}")
@@ -140,28 +140,30 @@ async def rename(bot, message):
 
     _bool_metadata = await db.get_metadata(message.chat.id)
 
-    if (_bool_metadata):
+    if _bool_metadata:
         metadata_path = f"Metadata/{new_filename}"
         metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
+            await ms.edit("I Found Your Metadata\n\n**Adding Metadata To File....**")
 
-            await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
-            cmd = f"""ffmpeg -nostdin -y -i "{path}" {metadata} "{metadata_path}" """
+            # Construct the ffmpeg command without using shell-specific syntax
+            cmd = ["ffmpeg", "-nostdin", "-y", "-i", path]
+            cmd.extend(metadata.split())
+            cmd.append(metadata_path)
 
-            process = await asyncio.create_subprocess_shell(
-                cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            # Use asyncio to run the ffmpeg command
+            process = await asyncio.create_subprocess_exec(
+                *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
 
             stdout, stderr = await process.communicate()
             er = stderr.decode()
 
-            try:
-                if er:
-                    print(er) 
-                    return await ms.edit(str(er) + "\n\n**Error**")
-            except BaseException:
-                pass
-        await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+            if er:
+                print(er)
+                return await ms.edit(str(er) + "\n\n**Error**")
+
+            await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying To Upload....**")
 
     else:
         print("No metadata to add")
