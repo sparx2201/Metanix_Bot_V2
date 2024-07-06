@@ -155,7 +155,8 @@ async def rename(bot, message):
             try:
                 er = stderr.decode()
 
-                if er:
+                if er:                    
+                    print(er) 
                     if 'Press [q] to stop, [?] for help' in er:
                         await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ 2 Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
                         # Execute a different command if the error message contains 'Press'
@@ -170,6 +171,7 @@ async def rename(bot, message):
                         er = stderr.decode()
 
                         if er:
+                            print(er) 
                             return await ms.edit(str(er) + "\n\n**Error**")
                         else:
                             await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴡɪᴛʜ ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ ᴄᴏᴍᴍᴀɴᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
