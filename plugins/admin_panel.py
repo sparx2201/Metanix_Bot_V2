@@ -37,29 +37,34 @@ async def restart_bot(b, m):
 
 @Client.on_message(filters.command("broadcast") & filters.user(Config.OWNER) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
-    await bot.send_message(Config.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
-    all_users = await db.get_all_users()
-    broadcast_msg = m.reply_to_message
-    sts_msg = await m.reply_text("Bʀᴏᴀᴅᴄᴀꜱᴛ Sᴛᴀʀᴛᴇᴅ..!") 
-    done = 0
-    failed = 0
-    success = 0
-    start_time = time.time()
-    total_users = await db.total_users_count()
-    async for user in all_users:
-        sts = await send_msg(user['_id'], broadcast_msg)
-        if sts == 200:
-           success += 1
-        else:
-           failed += 1
-        if sts == 400:
-           await db.delete_user(user['_id'])
-        done += 1
-        if not done % 20:
-           await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Iɴ Pʀᴏɢʀᴇꜱꜱ: \nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users} \nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
-    completed_in = datetime.timedelta(seconds=int(time.time() - start_time))
-    await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Cᴏᴍᴩʟᴇᴛᴇᴅ: \nCᴏᴍᴩʟᴇᴛᴇᴅ Iɴ {completed_in}.\n\nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users}\nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
-           
+    if m.from_user.id == Config.OWNER:
+        await bot.send_message(Config.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} is started the broadcast...")
+        
+        all_users = await db.get_all_users()
+        broadcast_msg = m.reply_to_message
+        sts_msg = await m.reply_text("Broadcast started!")
+        done = 0
+        failed = 0
+        success = 0
+        start_time = time.time()
+        total_users = await db.total_users_count()
+
+        async for user in all_users:
+            sts = await send_msg(user['_id'], broadcast_msg)
+            if sts == 200:
+                success += 1
+            else:
+                failed += 1
+            if sts == 400:
+                await db.delete_user(user['_id'])
+            done += 1
+            if not done % 20:
+                await sts_msg.edit(f"Broadcast in progress: \nTotal Users: {total_users} \nCompleted: {done}/{total_users}\nSuccess: {success}\nFailed: {failed}")
+
+        completed_in = datetime.timedelta(seconds=int(time.time() - start_time))
+        await sts_msg.edit(f"Broadcast completed: \nCompleted in `{completed_in}`.\n\nTotal Users: {total_users}\nCompleted: {done}/{total_users}\nSuccess: {success}\nFailed: {failed}")
+    else:
+        await m.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use this feature")
 async def send_msg(user_id, message):
     try:
         await message.forward(chat_id=int(user_id))
