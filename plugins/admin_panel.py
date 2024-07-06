@@ -25,7 +25,7 @@ async def get_stats(bot, message):
 #Restart to cancell all process 
 @Client.on_message(filters.private & filters.command("restart") & filters.user(Config.OWNER))
 async def restart_bot(b, m):
-    if m.from_user.id in Config.OWNER:
+    if m.from_user.id == Config.OWNER:
         logging.info("Restart command received from an authorized user")
         await m.reply_text("🔄__Restarting.....__")
         logging.info("Bot restarting...")
