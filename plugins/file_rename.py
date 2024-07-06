@@ -141,7 +141,7 @@ async def rename(bot, message):
     _bool_metadata = await db.get_metadata(message.chat.id)
 
     if _bool_metadata:
-        metadata_path = f"Metadata/{new_filename}"
+        metadata_path = f"Metadata/{new_filename}.mkv"  # Ensure the filename has a proper extension
         metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
             await ms.edit("I Found Your Metadata\n\n**Adding Metadata To File....**")
@@ -149,7 +149,7 @@ async def rename(bot, message):
             # Construct the ffmpeg command without using shell-specific syntax
             cmd = ["ffmpeg", "-nostdin", "-y", "-i", path]
             cmd.extend(metadata.split())
-            cmd.extend(["-f", "matroska", metadata_path])
+            cmd.append(metadata_path)
 
             # Debugging: Print the constructed command
             print("Constructed ffmpeg command:", ' '.join(cmd))
@@ -171,7 +171,7 @@ async def rename(bot, message):
                 return await ms.edit(str(er) + "\n\n**Error**")
 
             await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying To Upload....**")
-
+            
     else:
         print("No metadata to add")
         await ms.edit("**Trying to Upload....**")
