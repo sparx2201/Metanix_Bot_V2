@@ -10,7 +10,7 @@ class Config(object):
     API_ID = os.environ.get("API_ID", "")  # ⚠️ Required
     API_HASH = os.environ.get("API_HASH", "")  # ⚠️ Required
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-    OWNER = os.environ.get("OWNER", "")# ⚠️ Required
+    OWNER = int(os.environ.get("OWNER", ""))# ⚠️ Required
 
     # premium 4g renaming client
     STRING_API_ID = os.environ.get("STRING_API_ID", "")
