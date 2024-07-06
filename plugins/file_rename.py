@@ -146,27 +146,26 @@ async def rename(bot, message):
         if metadata:
             await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
             cmd = f"""ffmpeg -y -i "{path}" {metadata} "{metadata_path}" """
-
+            
             process = await asyncio.create_subprocess_shell(
                 cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
-
             stdout, stderr = await process.communicate()
-            er = stderr.decode()
 
-            if er:
-                if 'Press [q] to stop, [?] for help' in er:
-                    await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ 2 Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
-                    # Execute a different command if the error message contains 'Press'
-                    ecd = "-c:s copy -c:a copy -c:v copy"
-                    metadataV = metadata.replace(ecd, "-c:v libx264 -c:a aac -c:s mov_text")
-                    alternative_cmd = f"""ffmpeg -y -i "{path}" {metadataV} "{metadata_path}" """
-                    
-                    try:
+            try:
+                er = stderr.decode()
+
+                if er:
+                    if 'Press [q] to stop, [?] for help' in er:
+                        await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ 2 Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
+                        # Execute a different command if the error message contains 'Press'
+                        ecd = "-c:s copy -c:a copy -c:v copy"
+                        metadataV = metadata.replace(ecd, "-c:v libx264 -c:a aac -c:s mov_text")
+                        alternative_cmd = f"""ffmpeg -y -i "{path}" {metadataV} "{metadata_path}" """
+                        
                         process = await asyncio.create_subprocess_shell(
                             alternative_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
                         )
-
                         stdout, stderr = await process.communicate()
                         er = stderr.decode()
 
@@ -174,14 +173,14 @@ async def rename(bot, message):
                             return await ms.edit(str(er) + "\n\n**Error**")
                         else:
                             await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴡɪᴛʜ ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ ᴄᴏᴍᴍᴀɴᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
-                    except Exception as e:
-                        return await ms.edit(f"Error executing alternative command: {str(e)}")
+                    else:
+                        return await ms.edit(str(er) + "\n\n**Error**")
                 else:
-                    return await ms.edit(str(er) + "\n\n**Error**")
-            else:
-                await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+                    await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
+            except Exception as e:
+                await ms.edit(f"Error processing command output: {str(e)}")
 
-            
+                
     else:
         print("No metadata to add")
         await ms.edit("**Trying to Upload....**")
