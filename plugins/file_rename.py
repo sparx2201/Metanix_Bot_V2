@@ -149,7 +149,7 @@ async def rename(bot, message):
             # Construct the ffmpeg command without using shell-specific syntax
             cmd = ["ffmpeg", "-nostdin", "-y", "-i", path]
             cmd.extend(metadata.split())
-            cmd.append(metadata_path)
+            cmd.extend(["-f", "matroska", metadata_path])
 
             # Use asyncio to run the ffmpeg command
             process = await asyncio.create_subprocess_exec(
