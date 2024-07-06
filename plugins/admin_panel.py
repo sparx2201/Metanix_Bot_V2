@@ -25,10 +25,14 @@ async def get_stats(bot, message):
 #Restart to cancell all process 
 @Client.on_message(filters.private & filters.command("restart") & filters.user(Config.OWNER))
 async def restart_bot(b, m):
-    await m.reply_text("🔄__Rᴇꜱᴛᴀʀᴛɪɴɢ.....__")
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-
+    if m.from_user.id in Config.OWNER:
+        logging.info("Restart command received from an authorized user")
+        await m.reply_text("🔄__Restarting.....__")
+        logging.info("Bot restarting...")
+        os.execl(sys.executable, sys.executable, *sys.argv)
+    else:
+        logging.warning("Unauthorized user tried to restart the bot")
+        await m.reply_text("**Access Denied** ⚠️ \nError: You are not authorized to use this feature")
 
 
 @Client.on_message(filters.command("broadcast") & filters.user(Config.OWNER) & filters.reply)
