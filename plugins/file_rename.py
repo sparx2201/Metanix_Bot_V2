@@ -140,48 +140,28 @@ async def rename(bot, message):
 
     _bool_metadata = await db.get_metadata(message.chat.id)
 
-    if _bool_metadata:
+    if (_bool_metadata):
         metadata_path = f"Metadata/{new_filename}"
         metadata = await db.get_metadata_code(message.chat.id)
         if metadata:
+
             await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
-            cmd = f"""ffmpeg -y -i "{path}" {metadata} "{metadata_path}" """
-            
+            cmd = f"""ffmpeg -nostdin -y -i "{path}" {metadata} "{metadata_path}" """
+
             process = await asyncio.create_subprocess_shell(
                 cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
+
             stdout, stderr = await process.communicate()
+            er = stderr.decode()
 
             try:
-                er = stderr.decode()
-
-                if er:                    
+                if er:
                     print(er) 
-                    if 'Press [q] to stop, [?] for help' in er:
-                        await ms.edit("I Fᴏᴜɴᴅ Yᴏᴜʀ 2 Mᴇᴛᴀᴅᴀᴛᴀ\n\n**Aᴅᴅɪɴɢ Mᴇᴛᴀᴅᴀᴛᴀ Tᴏ Fɪʟᴇ....**")
-                        # Execute a different command if the error message contains 'Press'
-                        ecd = "-c:s copy -c:a copy -c:v copy"
-                        metadataV = metadata.replace(ecd, "-c:v libx264 -c:a aac -c:s mov_text")
-                        alternative_cmd = f"""ffmpeg -y -i "{path}" {metadataV} "{metadata_path}" """
-                        
-                        process = await asyncio.create_subprocess_shell(
-                            alternative_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-                        )
-                        stdout, stderr = await process.communicate()
-                        er = stderr.decode()
-
-                        if er:
-                            print(er) 
-                            return await ms.edit(str(er) + "\n\n**Error**")
-                        else:
-                            await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴡɪᴛʜ ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ ᴄᴏᴍᴍᴀɴᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
-                    else:
-                        return await ms.edit(str(er) + "\n\n**Error**")
-                else:
-                    await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
-            except Exception as e:
-                await ms.edit(f"Error processing command output: {str(e)}")
-
+                    return await ms.edit(str(er) + "\n\n**Error**")
+            except BaseException:
+                pass
+        await ms.edit("**Mᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ✅**\n\n**Tʀyɪɴɢ Tᴏ Uᴩʟᴏᴀᴅɪɴɢ....**")
                 
     else:
         print("No metadata to add")
