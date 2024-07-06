@@ -151,16 +151,23 @@ async def rename(bot, message):
             cmd.extend(metadata.split())
             cmd.extend(["-f", "matroska", metadata_path])
 
+            # Debugging: Print the constructed command
+            print("Constructed ffmpeg command:", ' '.join(cmd))
+
             # Use asyncio to run the ffmpeg command
             process = await asyncio.create_subprocess_exec(
                 *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
 
             stdout, stderr = await process.communicate()
+            out = stdout.decode()
             er = stderr.decode()
 
+            # Debugging: Print the output and error messages
+            print("ffmpeg output:", out)
+            print("ffmpeg error:", er)
+
             if er:
-                print(er)
                 return await ms.edit(str(er) + "\n\n**Error**")
 
             await ms.edit("**Metadata added to the file successfully ✅**\n\n**Trying To Upload....**")
