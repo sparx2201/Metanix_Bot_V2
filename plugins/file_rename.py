@@ -15,7 +15,7 @@ from helper.database import db
 from config import Config
 
 app = Client("test", api_id=Config.STRING_API_ID, api_hash=Config.STRING_API_HASH, session_string=Config.STRING_SESSION)
-download_tasks = {}
+
 
 # Define the callback for the 'upload' buttons
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video) & filters.user(Config.ADMIN))
@@ -147,7 +147,6 @@ async def rename(bot, message):
         print(f"Error setting prefix/suffix: {e}")
         return await message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
 
-
     file_path = f"downloads/{new_filename}"
     file = message
 
@@ -159,7 +158,6 @@ async def rename(bot, message):
     except Exception as e:
         print(f"Error downloading media: {e}")
         return await ms.edit(e)
-
 
     _bool_metadata = await db.get_metadata(message.chat.id)
 
@@ -328,15 +326,3 @@ async def rename(bot, message):
     if metadata_path:
         os.remove(metadata_path)
     print("Temporary files removed")
-
-@Client.on_callback_query(filters.regex(r"^cancel_(\d+)$"))
-async def cancel_download(bot, callback_query):
-    message_id = int(callback_query.data.split("_")[1])
-    if message_id in download_tasks:
-        download_task = download_tasks[message_id]
-        if not download_task.done():
-            download_task.cancel()
-            await callback_query.message.edit_text("Download cancelled by user.")
-    else:
-        await callback_query.message.edit_text("No download found to cancel.")
-
