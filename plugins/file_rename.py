@@ -147,42 +147,18 @@ async def rename(bot, message):
         print(f"Error setting prefix/suffix: {e}")
         return await message.edit(f"⚠️ Something went wrong, can't set Prefix or Suffix \nError: {e}")
 
+
     file_path = f"downloads/{new_filename}"
     file = message
 
     ms = await message.reply_text(text="Trying To Download.....",  reply_to_message_id=file.id)
 
     try:
-        # Download the media file
-        async def download():
-            try:
-                return await bot.download_media(
-                    message=file,
-                    file_name=file_path,
-                    progress=progress_for_pyrogram,
-                    progress_args=("**Download Started.... **", ms, time.time())
-                )
-            except asyncio.CancelledError:
-                print(f"Download task cancelled for file: {file_path}")
-                raise
-
-        download_task = asyncio.create_task(download())
-        download_tasks[file.id] = download_task
-
-        # Wait for download to complete or fail
-        await download_task
-
-        await ms.edit("Download completed successfully!")
-
+        path = await bot.download_media(message=file, file_name=file_path,  progress=progress_for_pyrogram, progress_args=("**Download Started.... **", ms, time.time()))
+        print(f"File downloaded to {path}")
     except Exception as e:
         print(f"Error downloading media: {e}")
-        await ms.edit(f"Error: {e}")
-
-    finally:
-        # Clean up download task
-        if file.id in download_tasks:
-            del download_tasks[file.id]
-
+        return await ms.edit(e)
 
 
     _bool_metadata = await db.get_metadata(message.chat.id)
