@@ -8,16 +8,14 @@ import re
 
 
 
-async def progress_for_pyrogram(current, total, ud_type, message, start):
+async def progress_for_pyrogram(current, total, ud_type, message, start, cancel_event):
     now = time.time()
     diff = now - start
 
     if round(diff % 5.00) == 0 or current == total:
         percentage = current * 100 / total
         speed = current / diff
-        elapsed_time, time_to_completion, estimated_total_time = calculate_times(
-            diff, current, total, speed
-        )
+        elapsed_time, time_to_completion, estimated_total_time = calculate_times(diff, current, total, speed)
 
         progress = generate_progress_bar(percentage)
         tmp = progress + Txt.PROGRESS_BAR.format(
@@ -29,10 +27,16 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
         )
 
         try:
-            await message.edit(text=f"{ud_type}\n\n{tmp}")
+            keyboard = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Cancel", callback_data=f"cancel_{message.id}")]]
+            )
+            await message.edit(text=f"{ud_type}\n\n{tmp}", reply_markup=keyboard)
         except:
             pass
 
+        if cancel_event.is_set():
+            await message.edit("Download cancelled by user.")
+            raise asyncio.CancelledError
 
 def generate_progress_bar(percentage):
     return (
