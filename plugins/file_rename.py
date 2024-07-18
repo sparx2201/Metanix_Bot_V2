@@ -62,6 +62,11 @@ async def rename(bot, message):
         remname3 = split_text[2] if len(split_text) > 2 else None
         remname4 = split_text[3] if len(split_text) > 3 else None
         remname5 = split_text[4] if len(split_text) > 4 else None
+        remname6 = split_text[5] if len(split_text) > 5 else None
+        remname7 = split_text[6] if len(split_text) > 6 else None
+        remname8 = split_text[7] if len(split_text) > 7 else None
+        remname9 = split_text[8] if len(split_text) > 8 else None
+        remname10 = split_text[9] if len(split_text) > 9 else None
         
         if remname1 and remname1 in new_filename_:
             new_filename_ = new_filename_.replace(remname1, "")  # Remove the remname text from the new filename
@@ -78,6 +83,22 @@ async def rename(bot, message):
         
         if remname5 and remname5 in new_filename_:
             new_filename_ = new_filename_.replace(remname5, "")  # Remove the remname text from the new filename
+
+        if remname6 and remname6 in new_filename_:
+            new_filename_ = new_filename_.replace(remname6, "")  # Remove the remname text from the new filename
+            print(f"Remname text: {remname_text} removed from filename")
+        
+        if remname7 and remname7 in new_filename_:
+            new_filename_ = new_filename_.replace(remname7, "")  # Remove the remname text from the new filename
+        
+        if remname8 and remname8 in new_filename_:
+            new_filename_ = new_filename_.replace(remname8, "")  # Remove the remname text from the new filename
+        
+        if remname9 and remname9 in new_filename_:
+            new_filename_ = new_filename_.replace(remname9, "")  # Remove the remname text from the new filename
+        
+        if remname10 and remname10 in new_filename_:
+            new_filename_ = new_filename_.replace(remname10, "")  # Remove the remname text from the new filename
         
 
     try:
@@ -132,11 +153,34 @@ async def rename(bot, message):
     ms = await message.reply_text(text="Trying To Download.....",  reply_to_message_id=file.id)
 
     try:
-        path = await bot.download_media(message=file, file_name=file_path,  progress=progress_for_pyrogram, progress_args=("**Download Started.... **", ms, time.time()))
-        print(f"File downloaded to {path}")
+        # Create a cancellation event
+        cancel_event = asyncio.Event()
+        download_tasks[file.id] = cancel_event
+
+        async def download():
+            path = await bot.download_media(
+                message=file, 
+                file_name=file_path, 
+                progress=progress_for_pyrogram, 
+                progress_args=("**Download Started.... **", ms, time.time(), cancel_event),
+                cancel_event=cancel_event
+            )
+            print(f"File downloaded to {path}")
+
+        download_task = asyncio.create_task(download())
+        await download_task
+
+        if not cancel_event.is_set():
+            await ms.edit("Download completed successfully!")
+
     except Exception as e:
         print(f"Error downloading media: {e}")
-        return await ms.edit(e)
+        await ms.edit(f"Error: {e}")
+
+    finally:
+        # Remove the task from the dictionary
+        if file.id in download_tasks:
+            del download_tasks[file.id]
 
     _bool_metadata = await db.get_metadata(message.chat.id)
 
@@ -306,5 +350,12 @@ async def rename(bot, message):
         os.remove(metadata_path)
     print("Temporary files removed")
 
-
+@Client.on_callback_query(filters.regex(r"^cancel_(\d+)$"))
+async def cancel_download(bot, callback_query):
+    message_id = int(callback_query.data.split("_")[1])
+    if message_id in download_tasks:
+        download_tasks[message_id].set()
+        await callback_query.message.edit_text("Download cancelled by user.")
+    else:
+        await callback_query.message.edit_text("No download found to cancel.")
 
