@@ -31,17 +31,10 @@ async def progress_for_pyrogram(current, total, ud_type, message, start, cancel_
             keyboard = InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Cancel", callback_data=f"cancel")]]
             )
-            await message.edit(text=f"{ud_type}\n\n{tmp}", reply_markup=keyboard)
+            await message.edit(text=f"{ud_type}\n\n{tmp}")
         except:
             pass
 
-#        if cancel_event.is_set():
-#            await message.edit("Download cancelled by user.")
-#            raise asyncio.CancelledError
-
-#        if message.message_id in download_tasks and download_tasks[message.message_id].cancelled():
-#            await message.edit("Download cancelled by user.")
-#            raise asyncio.CancelledError
 
 def generate_progress_bar(percentage):
     return (
