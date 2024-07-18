@@ -9,7 +9,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
 
-from helper.utils import progress_for_pyrogram, convert, download_tasks, humanbytes, add_prefix_suffix, add_sprefix_suffix, add_prefix_ssuffix, add_sprefix_ssuffix
+from helper.utils import progress_for_pyrogram, convert, humanbytes, add_prefix_suffix, add_sprefix_suffix, add_prefix_ssuffix, add_sprefix_ssuffix
 from helper.ffmpeg import fix_thumb, take_screen_shot
 from helper.database import db
 from config import Config
