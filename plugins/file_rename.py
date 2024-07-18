@@ -153,19 +153,18 @@ async def rename(bot, message):
     ms = await message.reply_text(text="Trying To Download.....",  reply_to_message_id=file.id)
 
     try:
-        # Create a cancellation event
-        cancel_event = asyncio.Event()
-        download_tasks[file.id] = cancel_event
-
+        # Download the media file
         async def download():
-            path = await bot.download_media(
-                message=file, 
-                file_name=file_path, 
-                progress=progress_for_pyrogram, 
-                progress_args=("**Download Started.... **", ms, time.time(), cancel_event),
-                cancel_event=cancel_event
-            )
-            print(f"File downloaded to {path}")
+            try:
+                return await bot.download_media(
+                    message=file,
+                    file_name=file_path,
+                    progress=progress_for_pyrogram,
+                    progress_args=("**Download Started.... **", ms, time.time())
+                )
+            except asyncio.CancelledError:
+                print(f"Download task cancelled for file: {file_path}")
+                raise
 
         download_task = asyncio.create_task(download())
         download_tasks[file.id] = download_task
@@ -183,6 +182,7 @@ async def rename(bot, message):
         # Clean up download task
         if file.id in download_tasks:
             del download_tasks[file.id]
+
 
 
     _bool_metadata = await db.get_metadata(message.chat.id)
