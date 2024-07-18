@@ -9,6 +9,7 @@ import re
 
 
 async def progress_for_pyrogram(current, total, ud_type, message, start, cancel_event):
+    download_tasks = {}
     now = time.time()
     diff = now - start
 
