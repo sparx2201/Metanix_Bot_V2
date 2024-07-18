@@ -168,19 +168,22 @@ async def rename(bot, message):
             print(f"File downloaded to {path}")
 
         download_task = asyncio.create_task(download())
+        download_tasks[file.id] = download_task
+
+        # Wait for download to complete or fail
         await download_task
 
-        if not cancel_event.is_set():
-            await ms.edit("Download completed successfully!")
+        await ms.edit("Download completed successfully!")
 
     except Exception as e:
         print(f"Error downloading media: {e}")
         await ms.edit(f"Error: {e}")
 
     finally:
-        # Remove the task from the dictionary
+        # Clean up download task
         if file.id in download_tasks:
             del download_tasks[file.id]
+
 
     _bool_metadata = await db.get_metadata(message.chat.id)
 
@@ -354,8 +357,10 @@ async def rename(bot, message):
 async def cancel_download(bot, callback_query):
     message_id = int(callback_query.data.split("_")[1])
     if message_id in download_tasks:
-        download_tasks[message_id].set()
-        await callback_query.message.edit_text("Download cancelled by user.")
+        download_task = download_tasks[message_id]
+        if not download_task.done():
+            download_task.cancel()
+            await callback_query.message.edit_text("Download cancelled by user.")
     else:
         await callback_query.message.edit_text("No download found to cancel.")
 
