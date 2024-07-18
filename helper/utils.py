@@ -39,6 +39,10 @@ async def progress_for_pyrogram(current, total, ud_type, message, start, cancel_
 #            await message.edit("Download cancelled by user.")
 #            raise asyncio.CancelledError
 
+#        if message.message_id in download_tasks and download_tasks[message.message_id].cancelled():
+#            await message.edit("Download cancelled by user.")
+#            raise asyncio.CancelledError
+
 def generate_progress_bar(percentage):
     return (
         "".join(["▰" for _ in range(math.floor(percentage / 5))])
